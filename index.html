@@ -168,7 +168,7 @@ function plotCenter(coords){
 window.addEventListener('load',()=>{
   Cesium.Ion.defaultAccessToken=CESIUM_TOKEN;
   viewer=new Cesium.Viewer('cesiumContainer',{
-    terrainProvider:Cesium.createWorldTerrain(),
+    terrain: Cesium.Terrain.fromWorldTerrain(),
     baseLayerPicker:false,navigationHelpButton:false,sceneModePicker:false,
     geocoder:false,homeButton:false,fullscreenButton:false,
     animation:false,timeline:false,infoBox:false,selectionIndicator:false,
