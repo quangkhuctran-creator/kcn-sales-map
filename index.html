@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <title>KCN Long Thành – Sales Map 3D | PROtech · PROBIM</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>" />
-    <link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <!-- CesiumJS CDN -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { overflow: hidden; background: #060b14; }
       #root { height: 100vh; }
+      .cesium-widget-credits { display: none !important; }
     </style>
   </head>
   <body>
