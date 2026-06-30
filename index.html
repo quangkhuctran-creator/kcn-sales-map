@@ -1,22 +1,346 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    <title>KCN Long Thành – Sales Map 3D | PROtech · PROBIM</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏭</text></svg>" />
-    <!-- CesiumJS CDN -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
-    <link href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { overflow: hidden; background: #060b14; }
-      #root { height: 100vh; }
-      .cesium-widget-credits { display: none !important; }
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>KCN Long Thành – Sales Map 3D | PROtech · PROBIM</title>
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100vh;overflow:hidden;background:#060b14;color:#e2e8f0;font-family:-apple-system,'Segoe UI',sans-serif}
+#app{display:flex;flex-direction:column;height:100vh}
+#topbar{background:#0d1117;border-bottom:1px solid #1e293b;padding:9px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:10}
+.brand-sub{font-size:9px;color:#3b82f6;text-transform:uppercase;letter-spacing:3px}
+.brand-name{font-size:14px;font-weight:700;color:#f1f5f9}
+.live{display:flex;align-items:center;gap:6px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 2s infinite}
+.live-txt{font-size:10px;color:#22c55e;font-weight:600}
+#stats{background:#0d1117;border-bottom:1px solid #1e293b;padding:6px 16px;display:flex;gap:20px;flex-shrink:0;overflow-x:auto}
+.stat{flex-shrink:0}.stat-l{font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:.5px}.stat-v{font-size:15px;font-weight:700;line-height:1.1}
+#main{flex:1;display:flex;overflow:hidden;position:relative}
+#cesiumContainer{flex:1}
+#controls{position:absolute;top:10px;left:10px;z-index:20;display:flex;flex-direction:column;gap:6px}
+.ctrl-box{background:#0d1117dd;border:1px solid #1e293b;border-radius:10px;padding:8px 10px;backdrop-filter:blur(10px);min-width:180px}
+.ctrl-title{font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.ctrl-btn{display:block;background:#1e293b;color:#64748b;border:1px solid #334155;border-radius:7px;padding:5px 10px;font-size:11px;cursor:pointer;width:100%;text-align:left;margin-bottom:4px}
+.ctrl-btn:last-child{margin-bottom:0}
+.ctrl-btn.active,.ctrl-btn:hover{background:#172554;border-color:#2563eb;color:#93c5fd}
+#legend{position:absolute;bottom:14px;left:10px;z-index:20;background:#0d1117dd;border:1px solid #1e293b;border-radius:10px;padding:9px 12px;backdrop-filter:blur(10px)}
+.leg-item{display:flex;align-items:center;gap:7px;margin-bottom:4px;font-size:11px}
+.leg-box{width:11px;height:11px;border-radius:2px;flex-shrink:0}
+#tour-btn{position:absolute;bottom:14px;right:356px;z-index:20;background:linear-gradient(135deg,#7c3aed,#1d4ed8);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 4px 20px rgba(124,58,237,.4)}
+#info{position:absolute;top:10px;right:356px;z-index:25;width:230px;background:#0d1117f2;border-radius:12px;padding:14px 16px;backdrop-filter:blur(12px);display:none}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-bottom:10px}
+.info-f label{display:block;font-size:8px;color:#475569;text-transform:uppercase;margin-bottom:1px}
+.info-f span{font-size:11px;font-weight:600;color:#e2e8f0}
+.info-note{background:#1e293b;border-radius:7px;padding:7px 9px;margin-bottom:10px;font-size:11px;color:#94a3b8;line-height:1.5}
+.btn-book{width:100%;background:#16a34a;color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:600;cursor:pointer;margin-bottom:6px}
+.btn-close{width:100%;background:#1e293b;color:#64748b;border:1px solid #334155;border-radius:7px;padding:7px;font-size:11px;cursor:pointer}
+#chat{width:340px;background:#0a0f1a;border-left:1px solid #1e293b;display:flex;flex-direction:column;flex-shrink:0}
+#chat-hdr{padding:12px 14px;border-bottom:1px solid #1e293b;display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+#chat-msgs{flex:1;overflow-y:auto;padding:10px;scrollbar-width:thin;scrollbar-color:#1e293b transparent}
+.msg{display:flex;margin-bottom:9px}
+.msg.user{justify-content:flex-end}
+.bubble{max-width:85%;padding:8px 11px;font-size:12px;line-height:1.6;white-space:pre-wrap;color:#e2e8f0}
+.bubble.ai{background:#1e293b;border:1px solid #334155;border-radius:4px 14px 14px 14px}
+.bubble.user{background:#1d4ed8;border-radius:14px 4px 14px 14px}
+#quick{padding:6px 8px;border-top:1px solid #1e293b;display:flex;flex-wrap:wrap;gap:4px}
+.qbtn{background:#1e293b;color:#64748b;border:1px solid #334155;border-radius:20px;padding:3px 8px;font-size:10px;cursor:pointer;white-space:nowrap}
+#chat-row{padding:8px;border-top:1px solid #1e293b;display:flex;gap:6px}
+#chat-inp{flex:1;background:#1e293b;border:1px solid #334155;border-radius:20px;padding:7px 12px;color:#e2e8f0;font-size:12px;outline:none}
+#chat-send{background:#1d4ed8;color:#fff;border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dot-spin{display:flex;gap:4px;padding:10px 14px}
+.dot-spin span{width:5px;height:5px;border-radius:50%;background:#3b82f6;display:inline-block}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-4px);opacity:1}}
+.cesium-widget-credits,.cesium-credit-logoContainer{display:none!important}
+input::placeholder{color:#334155}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:2px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="topbar">
+    <div><div class="brand-sub">PROtech · PROBIM Platform</div><div class="brand-name">KCN LONG THÀNH – ĐỒNG NAI · CESIUM 3D GLOBE</div></div>
+    <div class="live"><div class="live-dot"></div><span class="live-txt">LIVE 3D</span></div>
+  </div>
+  <div id="stats">
+    <div class="stat"><div class="stat-l">Tổng lô</div><div class="stat-v" style="color:#94a3b8">12</div></div>
+    <div class="stat"><div class="stat-l">Còn trống</div><div class="stat-v" style="color:#22c55e">5</div></div>
+    <div class="stat"><div class="stat-l">Đàm phán</div><div class="stat-v" style="color:#f59e0b">3</div></div>
+    <div class="stat"><div class="stat-l">Đã thuê</div><div class="stat-v" style="color:#64748b">4</div></div>
+    <div class="stat"><div class="stat-l">Trống (ha)</div><div class="stat-v" style="color:#60a5fa">5.7</div></div>
+    <div class="stat"><div class="stat-l">Giá từ</div><div class="stat-v" style="color:#a78bfa">75 USD</div></div>
+  </div>
+  <div id="main">
+    <div id="cesiumContainer"></div>
+    <div id="controls">
+      <div class="ctrl-box">
+        <div class="ctrl-title">Lọc trạng thái</div>
+        <button class="ctrl-btn active" onclick="setFilter('all',this)">Tất cả lô</button>
+        <button class="ctrl-btn" onclick="setFilter('available',this)">🟢 Còn trống (5)</button>
+        <button class="ctrl-btn" onclick="setFilter('negotiating',this)">🟡 Đàm phán (3)</button>
+        <button class="ctrl-btn" onclick="setFilter('leased',this)">⚫ Đã thuê (4)</button>
+      </div>
+      <div class="ctrl-box">
+        <div class="ctrl-title">Góc nhìn nhanh</div>
+        <button class="ctrl-btn" onclick="flyTo(106.952,10.976,2000000,-30)">🌍 Nhìn từ không gian</button>
+        <button class="ctrl-btn" onclick="flyTo(106.952,10.976,1800,-55)">🏭 Toàn khu KCN</button>
+        <button class="ctrl-btn" onclick="flyTo(106.9503,10.9791,600,-50)">📍 Zone A</button>
+        <button class="ctrl-btn" onclick="flyTo(106.9503,10.9777,600,-50)">📍 Zone B</button>
+        <button class="ctrl-btn" onclick="flyTo(106.9503,10.9762,600,-50)">📍 Zone C</button>
+        <button class="ctrl-btn" onclick="flyTo(106.9510,10.9748,400,-45)">⚡ Hạ tầng kỹ thuật</button>
+      </div>
+    </div>
+    <div id="legend">
+      <div class="ctrl-title">Chú giải</div>
+      <div class="leg-item"><div class="leg-box" style="background:#22c55e55;border:2px solid #22c55e"></div><span style="color:#22c55e">Còn trống</span></div>
+      <div class="leg-item"><div class="leg-box" style="background:#f59e0b55;border:2px solid #f59e0b"></div><span style="color:#f59e0b">Đàm phán</span></div>
+      <div class="leg-item"><div class="leg-box" style="background:#47556955;border:2px solid #64748b"></div><span style="color:#64748b">Đã thuê</span></div>
+    </div>
+    <button id="tour-btn" onclick="startTour()">🎬 Auto Tour KCN</button>
+    <div id="info"></div>
+    <div id="chat">
+      <div id="chat-hdr">
+        <div class="avatar">🤖</div>
+        <div><div style="font-size:13px;font-weight:700;color:#f1f5f9">Sales AI · Claude</div><div style="font-size:10px;color:#22c55e">● Anthropic API</div></div>
+      </div>
+      <div id="chat-msgs"></div>
+      <div id="quick">
+        <button class="qbtn" onclick="ask('Lô còn trống')">Lô còn trống</button>
+        <button class="qbtn" onclick="ask('Giá thuê Zone B')">Giá thuê</button>
+        <button class="qbtn" onclick="ask('Hạ tầng điện')">Hạ tầng điện</button>
+        <button class="qbtn" onclick="ask('Kết nối cảng biển')">Kết nối cảng</button>
+        <button class="qbtn" onclick="ask('Thủ tục FDI')">Thủ tục FDI</button>
+      </div>
+      <div id="chat-row">
+        <input id="chat-inp" placeholder="Hỏi về lô đất, giá thuê..." onkeydown="if(event.key==='Enter')ask(this.value)"/>
+        <button id="chat-send" onclick="ask(document.getElementById('chat-inp').value)">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const CESIUM_TOKEN='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YWEzMTlmMy03M2NlLTQ0YTQtYWI1NS0yMzlmNGJhMzIxMDYiLCJpZCI6NDI3MjkyLCJzdWIiOiJLRVZJTiBUUkFOIiwiaXNzIjoiaHR0cHM6Ly9hcGkuY2VzaXVtLmNvbSIsImF1ZCI6IjAxIiwiaWF0IjoxNzgyNzI4MDIyfQ.Aa9PVqMgNKUz3C5kWyKefugN4dqq_QqYhLflgPd061o';
+
+const PLOTS=[
+  {id:"A1",coords:[[106.9480,10.9795],[106.9492,10.9795],[106.9492,10.9786],[106.9480,10.9786]],area:8500,price:95,status:"available",zone:"A",power:"2×2000 kVA",water:"500 m³/ngày",road:"25m",floor:"30t/m²",note:"Lô góc, 2 mặt tiền đường"},
+  {id:"A2",coords:[[106.9493,10.9795],[106.9503,10.9795],[106.9503,10.9786],[106.9493,10.9786]],area:6200,price:95,status:"negotiating",zone:"A",power:"1500 kVA",water:"350 m³/ngày",road:"25m",floor:"25t/m²",note:"Đàm phán với doanh nghiệp Hàn Quốc"},
+  {id:"A3",coords:[[106.9504,10.9795],[106.9515,10.9795],[106.9515,10.9786],[106.9504,10.9786]],area:7800,price:95,status:"available",zone:"A",power:"2000 kVA",water:"400 m³/ngày",road:"25m",floor:"30t/m²",note:"Gần trạm PCCC"},
+  {id:"A4",coords:[[106.9516,10.9795],[106.9526,10.9795],[106.9526,10.9786],[106.9516,10.9786]],area:5500,price:95,status:"leased",zone:"A",power:"1200 kVA",water:"300 m³/ngày",road:"25m",floor:"20t/m²",note:"Cho thuê: Daewon (Hàn Quốc)"},
+  {id:"B1",coords:[[106.9478,10.9782],[106.9492,10.9782],[106.9492,10.9771],[106.9478,10.9771]],area:12000,price:85,status:"available",zone:"B",power:"3×2000 kVA",water:"800 m³/ngày",road:"30m",floor:"40t/m²",note:"Phù hợp nhà máy nặng, logistics"},
+  {id:"B2",coords:[[106.9493,10.9782],[106.9505,10.9782],[106.9505,10.9771],[106.9493,10.9771]],area:9800,price:85,status:"leased",zone:"B",power:"2500 kVA",water:"600 m³/ngày",road:"30m",floor:"35t/m²",note:"Cho thuê: Lego Vietnam"},
+  {id:"B3",coords:[[106.9506,10.9782],[106.9517,10.9782],[106.9517,10.9771],[106.9506,10.9771]],area:8200,price:85,status:"negotiating",zone:"B",power:"2000 kVA",water:"500 m³/ngày",road:"30m",floor:"30t/m²",note:"Đàm phán với doanh nghiệp Nhật Bản"},
+  {id:"B4",coords:[[106.9518,10.9782],[106.9527,10.9782],[106.9527,10.9771],[106.9518,10.9771]],area:6500,price:85,status:"available",zone:"B",power:"1800 kVA",water:"400 m³/ngày",road:"30m",floor:"30t/m²",note:"Gần cổng phụ B"},
+  {id:"C1",coords:[[106.9476,10.9768],[106.9492,10.9768],[106.9492,10.9755],[106.9476,10.9755]],area:15000,price:75,status:"available",zone:"C",power:"4×2000 kVA",water:"1200 m³/ngày",road:"40m",floor:"50t/m²",note:"Siêu lô – chip, data center"},
+  {id:"C2",coords:[[106.9493,10.9768],[106.9506,10.9768],[106.9506,10.9755],[106.9493,10.9755]],area:11500,price:75,status:"leased",zone:"C",power:"3000 kVA",water:"900 m³/ngày",road:"40m",floor:"45t/m²",note:"Cho thuê: Samsung SDI"},
+  {id:"C3",coords:[[106.9507,10.9768],[106.9518,10.9768],[106.9518,10.9755],[106.9507,10.9755]],area:8800,price:75,status:"available",zone:"C",power:"2500 kVA",water:"700 m³/ngày",road:"40m",floor:"40t/m²",note:"Gần hệ thống xử lý nước thải"},
+  {id:"C4",coords:[[106.9519,10.9768],[106.9528,10.9768],[106.9528,10.9755],[106.9519,10.9755]],area:7200,price:75,status:"negotiating",zone:"C",power:"2000 kVA",water:"500 m³/ngày",road:"40m",floor:"35t/m²",note:"Đàm phán với Foxconn"},
+];
+const INFRA=[
+  {lon:106.9465,lat:10.9776,icon:"🚧",label:"Cổng chính"},
+  {lon:106.9535,lat:10.9776,icon:"🚧",label:"Cổng phụ B"},
+  {lon:106.9510,lat:10.9748,icon:"⚡",label:"Trạm 110kV"},
+  {lon:106.9528,lat:10.9748,icon:"💧",label:"WWTP"},
+  {lon:106.9490,lat:10.9748,icon:"🚒",label:"PCCC"},
+  {lon:106.9510,lat:10.9802,icon:"🏢",label:"Ban QL"},
+];
+const STATUS={
+  available:{fill:"#22c55e",line:"#22c55e",badge:"#052e16",badgeT:"#22c55e",label:"Còn trống"},
+  negotiating:{fill:"#f59e0b",line:"#f59e0b",badge:"#1c1400",badgeT:"#f59e0b",label:"Đàm phán"},
+  leased:{fill:"#475569",line:"#64748b",badge:"#0f172a",badgeT:"#64748b",label:"Đã thuê"},
+};
+const KCN_PROMPT=`Bạn là Sales AI của KCN Long Thành – Đồng Nai (PROtech & PROBIM).
+Lô trống: A1(8500m²,95USD), A3(7800m²,95USD), B1(12000m²,85USD), B4(6500m²,85USD), C1(15000m²,75USD), C3(8800m²,75USD).
+Giá: Zone A:95, Zone B:85, Zone C:75 USD/m²/kỳ.
+Cảng Cái Mép:35km, Sân bay LT:8km, Cao tốc:2km. FDI: Samsung SDI, Lego, Daewon. Thủ tục:15 ngày.
+Trả lời ngắn, tiếng Việt.`;
+
+let viewer, entities=[], currentFilter='all', touring=false, tourCancel=false, chatMsgs=[];
+
+function plotCenter(coords){
+  const lons=coords.map(c=>c[0]),lats=coords.map(c=>c[1]);
+  return[(Math.min(...lons)+Math.max(...lons))/2,(Math.min(...lats)+Math.max(...lats))/2];
+}
+
+window.addEventListener('load',()=>{
+  Cesium.Ion.defaultAccessToken=CESIUM_TOKEN;
+  viewer=new Cesium.Viewer('cesiumContainer',{
+    terrainProvider:Cesium.createWorldTerrain(),
+    baseLayerPicker:false,navigationHelpButton:false,sceneModePicker:false,
+    geocoder:false,homeButton:false,fullscreenButton:false,
+    animation:false,timeline:false,infoBox:false,selectionIndicator:false,
+    creditContainer:document.createElement('div'),
+  });
+  viewer.scene.globe.enableLighting=false;
+
+  PLOTS.forEach(p=>{
+    const cfg=STATUS[p.status];
+    const [cx,cy]=plotCenter(p.coords);
+    const flat=p.coords.flatMap(c=>c);
+    const e=viewer.entities.add({
+      id:p.id,
+      polygon:{
+        hierarchy:Cesium.Cartesian3.fromDegreesArray(flat),
+        material:Cesium.Color.fromCssColorString(cfg.fill).withAlpha(0.55),
+        outline:true,outlineColor:Cesium.Color.fromCssColorString(cfg.line),outlineWidth:2,
+        height:0,extrudedHeight:8,
+      },
+      label:{
+        text:p.id+'\n'+(p.area/1000).toFixed(1)+'k m²',
+        position:Cesium.Cartesian3.fromDegrees(cx,cy,14),
+        font:'700 13px monospace',
+        fillColor:Cesium.Color.fromCssColorString(cfg.line),
+        outlineColor:Cesium.Color.BLACK,outlineWidth:2,
+        style:Cesium.LabelStyle.FILL_AND_OUTLINE,
+        verticalOrigin:Cesium.VerticalOrigin.CENTER,
+        horizontalOrigin:Cesium.HorizontalOrigin.CENTER,
+        disableDepthTestDistance:Number.POSITIVE_INFINITY,
+        scaleByDistance:new Cesium.NearFarScalar(400,1.1,3000,0.25),
+      },
+    });
+    e._plotData=p;
+    entities.push({entity:e,plot:p});
+  });
+
+  INFRA.forEach(i=>{
+    viewer.entities.add({
+      position:Cesium.Cartesian3.fromDegrees(i.lon,i.lat,5),
+      label:{
+        text:i.icon+' '+i.label,font:'11px sans-serif',
+        fillColor:Cesium.Color.fromCssColorString('#94a3b8'),
+        outlineColor:Cesium.Color.BLACK,outlineWidth:2,
+        style:Cesium.LabelStyle.FILL_AND_OUTLINE,
+        verticalOrigin:Cesium.VerticalOrigin.BOTTOM,
+        disableDepthTestDistance:Number.POSITIVE_INFINITY,
+        scaleByDistance:new Cesium.NearFarScalar(200,1,2000,0.2),
+      },
+    });
+  });
+
+  const handler=new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  handler.setInputAction(e=>{
+    const p=viewer.scene.pick(e.position);
+    if(Cesium.defined(p)&&p.id&&p.id._plotData){
+      showInfo(p.id._plotData);
+      const [cx,cy]=plotCenter(p.id._plotData.coords);
+      viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(cx,cy,380),orientation:{heading:0,pitch:Cesium.Math.toRadians(-45),roll:0},duration:1.5});
+    } else {
+      document.getElementById('info').style.display='none';
+    }
+  },Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+  viewer.camera.flyTo({
+    destination:Cesium.Cartesian3.fromDegrees(106.952,10.976,1800),
+    orientation:{heading:0,pitch:Cesium.Math.toRadians(-55),roll:0},duration:2.5,
+  });
+
+  addChat('assistant','🌍 Cesium 3D Globe sẵn sàng!\n\nClick vào lô màu xanh/vàng/xám trên bản đồ, hoặc hỏi tôi về giá thuê, hạ tầng, FDI.');
+});
+
+function flyTo(lon,lat,h,pitch){
+  viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(lon,lat,h),orientation:{heading:0,pitch:Cesium.Math.toRadians(pitch),roll:0},duration:2});
+}
+
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.ctrl-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  entities.forEach(({entity,plot})=>{ entity.show=f==='all'||plot.status===f; });
+  document.getElementById('info').style.display='none';
+}
+
+function showInfo(p){
+  const cfg=STATUS[p.status];
+  const panel=document.getElementById('info');
+  panel.style.display='block';
+  panel.style.border='1px solid '+cfg.line;
+  panel.style.boxShadow='0 0 30px '+cfg.line+'33';
+  panel.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+      <div>
+        <div style="font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:2px">Lô · Zone ${p.zone}</div>
+        <div style="font-size:24px;font-weight:800;font-family:monospace;color:${cfg.badgeT}">${p.id}</div>
+      </div>
+      <div style="background:${cfg.badge};border:1px solid ${cfg.line};color:${cfg.badgeT};border-radius:20px;padding:2px 8px;font-size:10px;font-weight:600">${cfg.label}</div>
+    </div>
+    <div class="info-grid">
+      <div class="info-f"><label>Diện tích</label><span>${p.area.toLocaleString()} m²</span></div>
+      <div class="info-f"><label>Giá thuê</label><span>${p.price} USD/m²</span></div>
+      <div class="info-f"><label>Điện</label><span>${p.power}</span></div>
+      <div class="info-f"><label>Nước</label><span>${p.water}</span></div>
+      <div class="info-f"><label>Đường</label><span>${p.road}</span></div>
+      <div class="info-f"><label>Tải trọng</label><span>${p.floor}</span></div>
+    </div>
+    <div class="info-note">${p.note}</div>
+    <div style="display:flex;gap:6px">
+      ${p.status==='available'?'<button class="btn-book">📋 Đặt lịch xem lô</button>':''}
+      <button class="btn-close" onclick="document.getElementById('info').style.display='none'">Đóng</button>
+    </div>`;
+  ask(`Chi tiết lô ${p.id} Zone ${p.zone}: ${p.area.toLocaleString()}m², ${p.price}USD/m²`,false);
+}
+
+const TOUR_STOPS=[
+  {lon:106.952,lat:10.976,h:2000,pitch:-50,label:'🌍 Toàn cảnh KCN Long Thành'},
+  {lon:106.9465,lat:10.9776,h:300,pitch:-40,label:'🚧 Cổng chính'},
+  {lon:106.9503,lat:10.9791,h:600,pitch:-50,label:'📍 Zone A – Đường 25m'},
+  {lon:106.9503,lat:10.9777,h:600,pitch:-50,label:'📍 Zone B – Đường 30m'},
+  {lon:106.9503,lat:10.9762,h:600,pitch:-50,label:'📍 Zone C – Siêu lô 40m'},
+  {lon:106.9510,lat:10.9748,h:350,pitch:-45,label:'⚡ Trạm 110kV & WWTP'},
+  {lon:106.9535,lat:10.9776,h:300,pitch:-40,label:'🚧 Cổng phụ B'},
+  {lon:106.952,lat:10.9776,h:1600,pitch:-60,label:'🏭 Nhìn toàn khu KCN'},
+];
+
+async function startTour(){
+  if(touring){tourCancel=true;document.getElementById('tour-btn').textContent='🎬 Auto Tour KCN';return;}
+  tourCancel=false;touring=true;
+  document.getElementById('tour-btn').textContent='⏹ Dừng tour';
+  addChat('assistant','🎬 Bắt đầu Auto Tour KCN Long Thành...');
+  for(const s of TOUR_STOPS){
+    if(tourCancel)break;
+    viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(s.lon,s.lat,s.h),orientation:{heading:0,pitch:Cesium.Math.toRadians(s.pitch),roll:0},duration:2.5});
+    await new Promise(r=>setTimeout(r,3200));
+    if(!tourCancel)addChat('assistant',s.label);
+  }
+  touring=false;tourCancel=false;
+  document.getElementById('tour-btn').textContent='🎬 Auto Tour KCN';
+  if(!tourCancel)addChat('assistant','✅ Tour hoàn thành! Click lô đất để xem chi tiết.');
+}
+
+function addChat(role,text){
+  chatMsgs.push({role,text});
+  const c=document.getElementById('chat-msgs');
+  const d=document.createElement('div');
+  d.className='msg'+(role==='user'?' user':'');
+  const b=document.createElement('div');
+  b.className='bubble '+(role==='user'?'user':'ai');
+  b.textContent=text;
+  d.appendChild(b);
+  c.appendChild(d);
+  c.scrollTop=c.scrollHeight;
+}
+
+async function ask(text,addUser=true){
+  if(!text||!text.trim())return;
+  document.getElementById('chat-inp').value='';
+  if(addUser)addChat('user',text);
+  const msgs=[...chatMsgs.slice(-10).map(m=>({role:m.role==='assistant'?'assistant':'user',content:m.text})),{role:'user',content:text}];
+  const dots=document.createElement('div');dots.className='msg';
+  const db=document.createElement('div');db.className='bubble ai dot-spin';
+  [0,1,2].forEach(()=>{const s=document.createElement('span');s.style.animation=`bounce .9s ease-in-out ${Math.random().toFixed(1)}s infinite`;db.appendChild(s);});
+  dots.appendChild(db);document.getElementById('chat-msgs').appendChild(dots);
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:600,system:KCN_PROMPT,messages:msgs})
+    });
+    const data=await res.json();
+    dots.remove();
+    addChat('assistant',data.content?.[0]?.text||'Thử lại nhé!');
+  }catch(e){dots.remove();addChat('assistant','Lỗi kết nối!');}
+}
+</script>
+</body>
 </html>
