@@ -681,6 +681,10 @@ async function startTour(){
 
 // ── PORT TOUR ─────────────────────────────────────────────────────────────────
 async function tourPort(){
+  if(touring){tourCancel=true;return;}
+  tourCancel=false;touring=true;
+  const btn=document.querySelector('[onclick="tourPort()"]');
+  if(btn){btn.textContent='⏹ DỪNG';btn.style.background='#0e7490';}
   addChat('assistant','⚓ BẮT ĐẦU TOUR CẢNG BIỂN ĐÔNG NAM BỘ – CHUỖI CUNG ỨNG XUẤT KHẨU...');
   const stops=[
     {lon:106.9000,lat:10.7500,h:120000,pitch:-30,label:'🗺️ Vùng Kinh tế Trọng điểm Phía Nam – Mạng lưới KCN & Cảng biển'},
@@ -711,6 +715,8 @@ async function tourPort(){
 
 // ── CITY TOURS ────────────────────────────────────────────────────────────────
 async function tourCity(city){
+  if(touring){tourCancel=true;return;}
+  tourCancel=false;touring=true;
   const CITIES={
     singapore:{
       lon:103.8198,lat:1.3521,
@@ -739,6 +745,10 @@ async function tourCity(city){
   };
   const c=CITIES[city];
   if(!c)return;
+  const cityLabels={'singapore':'🇸🇬 SINGAPORE','hongkong':'🇭🇰 HONG KONG'};
+  const cityBgs={'singapore':'linear-gradient(135deg,#dc2626,#b91c1c)','hongkong':'linear-gradient(135deg,#b45309,#92400e)'};
+  const btn=document.querySelector('[onclick="tourCity(\''+city+'\')"]');
+  if(btn){btn.textContent='⏹ DỪNG';btn.style.background=cityBgs[city]||'#dc2626';}
   addChat('assistant',c.label+' – BẮT ĐẦU TOUR 3D PRO GLOBAL...');
   for(let i=0;i<c.stops.length;i++){
     const s=c.stops[i];
@@ -750,9 +760,10 @@ async function tourCity(city){
     await new Promise(r=>setTimeout(r,2800));
   }
   hideTourBanner();
+  touring=false;tourCancel=false;
+  if(btn){btn.textContent=cityLabels[city]||city.toUpperCase();btn.style.background=cityBgs[city]||'#dc2626';}
   addChat('assistant','✅ TOUR '+c.label.toUpperCase()+' HOÀN THÀNH! Đang trở về Landmark 81...');
-  await new Promise(r=>setTimeout(r,500));
-  flyToLandmark81();
+  setTimeout(flyToLandmark81,500);
 }
 
 
