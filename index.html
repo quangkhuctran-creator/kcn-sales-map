@@ -58,6 +58,9 @@ html,body{height:100vh;overflow:hidden;background:#060b14;color:#e2e8f0;font-fam
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes bounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-4px);opacity:1}}
 .cesium-widget-credits,.cesium-credit-logoContainer{display:none!important}
+#cesiumContainer canvas{display:block}
+#cesiumContainer .cesium-widget{overflow:hidden}
+
 input::placeholder{color:#334155}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:2px}
 
@@ -73,12 +76,15 @@ input::placeholder{color:#334155}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100vh;overflow:hidden}
 #app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
-#main{flex:1;display:flex;min-height:0;overflow:hidden;position:relative}
+#main{flex:1;display:flex;min-height:0;overflow:hidden;position:relative;isolation:isolate}
 #cesiumContainer{flex:1;min-width:0;min-height:0}
 #chat{width:340px;background:#0a0f1a;border-left:1px solid #1e293b;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;min-height:0}
-#tour-bar{background:#0d1117;border-top:1px solid #1e293b;padding:7px 14px;display:flex;align-items:center;gap:7px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;z-index:10}
+#tour-bar{background:#0d1117;border-top:1px solid #1e293b;padding:7px 14px;display:flex;align-items:center;gap:7px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;z-index:9999;position:relative}
 #tour-bar::-webkit-scrollbar{display:none}
 .cesium-widget-credits,.cesium-credit-logoContainer{display:none!important}
+#cesiumContainer canvas{display:block}
+#cesiumContainer .cesium-widget{overflow:hidden}
+
 </style>
 </head>
 <body>
