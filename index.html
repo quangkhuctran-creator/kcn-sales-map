@@ -244,6 +244,13 @@ window.addEventListener('load',()=>{
     }
   },Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
+  // ── OSM 3D BUILDINGS (giống Cesium Stories) ──────────────────────────────
+  try {
+    Cesium.createOsmBuildingsAsync().then(function(osmBuildings) {
+      viewer.scene.primitives.add(osmBuildings);
+    }).catch(function(e){ console.warn('OSM Buildings:', e); });
+  } catch(e) { console.warn('OSM Buildings not available:', e); }
+
   viewer.camera.flyTo({
     destination:Cesium.Cartesian3.fromDegrees(106.952,10.976,1800),
     orientation:{heading:0,pitch:Cesium.Math.toRadians(-55),roll:0},duration:2.5,
