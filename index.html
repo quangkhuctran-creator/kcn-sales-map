@@ -65,6 +65,18 @@ input::placeholder{color:#334155}
   <div id="topbar">
     <div><div class="brand-sub">PROtech · PROBIM Platform</div><div class="brand-name">ĐỒNG NAI CITY CENTER · KHU CÔNG NGHIỆP / INDUSTRY PARK · CẢNG / PORT · LOGISTICS</div></div>
     <div class="live"><div class="live-dot"></div><span class="live-txt">LIVE 3D</span></div>
+    <!-- SEARCH BOX -->
+    <div id="search-box" style="display:flex;align-items:center;gap:8px;background:#1e293b;border:1px solid #334155;border-radius:24px;padding:6px 14px;min-width:300px;position:relative">
+      <span style="font-size:14px">🔍</span>
+      <input id="search-inp" placeholder="Tìm địa điểm, quốc gia, khu vực..." autocomplete="off"
+        style="background:transparent;border:none;outline:none;color:#e2e8f0;font-size:12px;flex:1;min-width:200px"
+        oninput="onSearchInput(this.value)"
+        onkeydown="if(event.key==='Enter')doSearch(this.value)"
+      />
+      <button onclick="clearSearch()" id="search-clear" style="display:none;background:none;border:none;color:#64748b;cursor:pointer;font-size:14px;padding:0">✕</button>
+      <!-- DROPDOWN -->
+      <div id="search-dropdown" style="display:none;position:absolute;top:42px;left:0;right:0;background:#0d1117;border:1px solid #334155;border-radius:12px;z-index:999;max-height:280px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.6)"></div>
+    </div>
   </div>
   <div id="stats">
     <div class="stat"><div class="stat-l">Tổng lô</div><div class="stat-v" style="color:#94a3b8">12</div></div>
@@ -341,6 +353,140 @@ async function ask(text,addUser=true){
     addChat('assistant',data.content?.[0]?.text||'Thử lại nhé!');
   }catch(e){dots.remove();addChat('assistant','Lỗi kết nối!');}
 }
+
+// ── SEARCH ────────────────────────────────────────────────────────────────────
+let searchTimer=null;
+
+// Quick access: KCN plots + infra + ports
+const SEARCH_LOCAL=[
+  ...PLOTS.map(p=>({name:'Lô '+p.id+' – Zone '+p.zone+' KCN Long Thành',type:'plot',icon:'🏭',lon:(p.coords[0][0]+p.coords[2][0])/2,lat:(p.coords[0][1]+p.coords[2][1])/2,h:400,detail:p.area.toLocaleString()+'m² · '+p.price+'USD/m² · '+STATUS[p.status].label})),
+  {name:'Cảng Cái Mép – Thị Vải',type:'port',icon:'⚓',lon:107.0152,lat:10.5018,h:2000,detail:'Cảng nước sâu · 35km từ KCN'},
+  {name:'Cảng Cát Lái – TP.HCM',type:'port',icon:'🚢',lon:106.7525,lat:10.7742,h:2000,detail:'Container lớn nhất VN · 45km'},
+  {name:'Cảng Phú Mỹ – Bà Rịa Vũng Tàu',type:'port',icon:'🏗️',lon:107.0623,lat:10.6075,h:1500,detail:'Hàng rời & container · 40km'},
+  {name:'Sân bay Long Thành',type:'airport',icon:'✈️',lon:106.9626,lat:10.8612,h:1000,detail:'Sân bay quốc tế mới · 8km'},
+  {name:'KCN Long Thành – Đồng Nai',type:'zone',icon:'🏭',lon:106.952,lat:10.976,h:1800,detail:'Toàn khu KCN'},
+  {name:'TP. Biên Hòa – Đồng Nai',type:'city',icon:'🏙️',lon:106.8243,lat:10.9460,h:5000,detail:'Trung tâm tỉnh Đồng Nai'},
+  {name:'TP. Hồ Chí Minh',type:'city',icon:'🏙️',lon:106.6297,lat:10.8231,h:15000,detail:'Trung tâm kinh tế lớn nhất VN'},
+  {name:'Hà Nội',type:'city',icon:'🏙️',lon:105.8342,lat:21.0278,h:20000,detail:'Thủ đô Việt Nam'},
+  {name:'Vũng Tàu',type:'city',icon:'🌊',lon:107.0843,lat:10.3460,h:8000,detail:'Thành phố biển · Bà Rịa-Vũng Tàu'},
+];
+
+const TYPE_COLOR={plot:'#22c55e',port:'#3b82f6',airport:'#a78bfa',zone:'#f59e0b',city:'#e2e8f0',default:'#94a3b8'};
+
+function onSearchInput(val){
+  const clear=document.getElementById('search-clear');
+  clear.style.display=val?'block':'none';
+  clearTimeout(searchTimer);
+  if(!val.trim()){hideDropdown();return;}
+  searchTimer=setTimeout(()=>runSearch(val),300);
+}
+
+function runSearch(val){
+  const q=val.toLowerCase();
+  // Local results first
+  const local=SEARCH_LOCAL.filter(r=>r.name.toLowerCase().includes(q)).slice(0,5);
+  showDropdown(local, val, true);
+  // Then fetch Nominatim
+  fetchNominatim(val, local);
+}
+
+async function fetchNominatim(val, localResults){
+  try{
+    const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&limit=5&addressdetails=1`,{
+      headers:{'Accept-Language':'vi,en'}
+    });
+    const data=await r.json();
+    const remote=data.map(d=>({
+      name:d.display_name.split(',').slice(0,3).join(', '),
+      type:'remote',icon:getOsmIcon(d.type,d.class),
+      lon:parseFloat(d.lon),lat:parseFloat(d.lat),
+      h:getZoomHeight(d.type,d.class),
+      detail:d.type+' · '+d.address?.country||'',
+    }));
+    showDropdown([...localResults,...remote], val, false);
+  }catch(e){}
+}
+
+function getOsmIcon(type,cls){
+  if(cls==='place'||type==='city'||type==='town')return '🏙️';
+  if(cls==='boundary'||type==='administrative')return '🗺️';
+  if(cls==='amenity')return '📍';
+  if(type==='port'||type==='harbour')return '⚓';
+  if(type==='aerodrome'||cls==='aeroway')return '✈️';
+  if(cls==='industrial')return '🏭';
+  if(cls==='waterway'||cls==='natural')return '🌊';
+  return '📍';
+}
+
+function getZoomHeight(type,cls){
+  if(type==='country')return 2000000;
+  if(type==='state'||type==='province')return 500000;
+  if(type==='city')return 30000;
+  if(type==='town')return 10000;
+  if(type==='village')return 3000;
+  return 5000;
+}
+
+function showDropdown(results, query, isLoading){
+  const dd=document.getElementById('search-dropdown');
+  if(!results.length&&!isLoading){dd.style.display='none';return;}
+  dd.style.display='block';
+  dd.innerHTML = results.map((r,i)=>`
+    <div onclick="selectResult(${r.lon},${r.lat},${r.h},'${r.name.replace(/'/g,"\'")}','${r.type}')"
+      style="display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border-bottom:1px solid #1e293b"
+      onmouseover="this.style.background='#1e293b'" onmouseout="this.style.background=''"
+    >
+      <span style="font-size:18px;flex-shrink:0">${r.icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;color:${TYPE_COLOR[r.type]||TYPE_COLOR.default};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.name}</div>
+        <div style="font-size:10px;color:#475569;margin-top:1px">${r.detail||''}</div>
+      </div>
+      <span style="font-size:10px;color:#334155;flex-shrink:0">${r.type==='plot'?'KCN':r.type==='port'?'Cảng':r.type==='airport'?'Bay':r.type==='city'?'TP':'Địa điểm'}</span>
+    </div>
+  `).join('')+(isLoading?'<div style="padding:8px 14px;font-size:11px;color:#475569;text-align:center">🔍 Đang tìm kiếm toàn cầu...</div>':'');
+}
+
+function selectResult(lon,lat,h,name,type){
+  hideDropdown();
+  document.getElementById('search-inp').value=name;
+  document.getElementById('search-clear').style.display='block';
+  viewer.camera.flyTo({
+    destination:Cesium.Cartesian3.fromDegrees(lon,lat,h),
+    orientation:{heading:0,pitch:Cesium.Math.toRadians(h>50000?-30:-50),roll:0},
+    duration:2,
+  });
+  addChat('assistant','📍 Đang bay đến: '+name+(type==='plot'?' – click vào lô đất để xem chi tiết':''));
+}
+
+function doSearch(val){
+  if(!val.trim())return;
+  const local=SEARCH_LOCAL.find(r=>r.name.toLowerCase().includes(val.toLowerCase()));
+  if(local){selectResult(local.lon,local.lat,local.h,local.name,local.type);return;}
+  // Direct Nominatim
+  fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&limit=1`,{headers:{'Accept-Language':'vi,en'}})
+    .then(r=>r.json()).then(data=>{
+      if(data[0]){
+        const d=data[0];
+        selectResult(parseFloat(d.lon),parseFloat(d.lat),getZoomHeight(d.type,d.class),d.display_name.split(',')[0],'remote');
+      }
+    }).catch(()=>{});
+}
+
+function clearSearch(){
+  document.getElementById('search-inp').value='';
+  document.getElementById('search-clear').style.display='none';
+  hideDropdown();
+}
+
+function hideDropdown(){
+  document.getElementById('search-dropdown').style.display='none';
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click',e=>{
+  if(!document.getElementById('search-box').contains(e.target)) hideDropdown();
+});
+
 </script>
 </body>
 </html>
