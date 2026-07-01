@@ -472,21 +472,7 @@ const TOUR_STOPS=[
   {lon:106.952,lat:10.9776,h:1600,pitch:-60,label:'🏭 Nhìn toàn khu KCN'},
 ];
 
-async function startTour(){
-  if(touring){tourCancel=true;document.getElementById('tour-btn').textContent='🎬 Auto Tour KCN';return;}
-  tourCancel=false;touring=true;
-  document.getElementById('tour-btn').textContent='⏹ Dừng tour';
-  addChat('assistant','🎬 Bắt đầu Auto Tour KCN Long Thành...');
-  for(const s of TOUR_STOPS){
-    if(tourCancel)break;
-    viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(s.lon,s.lat,s.h),orientation:{heading:0,pitch:Cesium.Math.toRadians(s.pitch),roll:0},duration:2.5});
-    await new Promise(r=>setTimeout(r,3200));
-    if(!tourCancel)addChat('assistant',s.label);
-  }
-  touring=false;tourCancel=false;
-  document.getElementById('tour-btn').textContent='🎬 Auto Tour KCN';
-  if(!tourCancel)addChat('assistant','✅ Tour hoàn thành! Click lô đất để xem chi tiết.');
-}
+
 
 function addChat(role,text){
   chatMsgs.push({role,text});
