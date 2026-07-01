@@ -128,6 +128,28 @@ input::placeholder{color:#334155}
       <button onclick="tourCity('hongkong')" style="background:linear-gradient(135deg,#b45309,#dc2626);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(180,83,9,.4);white-space:nowrap">🇭🇰 Hong Kong</button>
     </div>
     <div id="info"></div>
+
+    <!-- TOUR BANNER - hiện giữa màn hình -->
+    <div id="tour-banner" style="
+      display:none;position:absolute;
+      top:50%;left:50%;transform:translate(-50%,-50%);
+      z-index:50;pointer-events:none;
+      text-align:center;
+    ">
+      <div style="
+        background:rgba(6,11,20,0.85);
+        border:2px solid #3b82f6;
+        border-radius:16px;
+        padding:18px 32px;
+        backdrop-filter:blur(16px);
+        box-shadow:0 0 40px rgba(59,130,246,0.4);
+        max-width:600px;
+      ">
+        <div id="tour-step-num" style="font-size:11px;color:#3b82f6;text-transform:uppercase;letter-spacing:3px;margin-bottom:6px;font-weight:700"></div>
+        <div id="tour-banner-text" style="font-size:22px;font-weight:800;color:#f1f5f9;line-height:1.4;text-transform:uppercase;letter-spacing:1px"></div>
+        <div id="tour-banner-sub" style="font-size:13px;color:#94a3b8;margin-top:6px"></div>
+      </div>
+    </div>
     <div id="chat">
       <div id="chat-hdr">
         <div class="avatar">🤖</div>
@@ -552,7 +574,7 @@ document.addEventListener('click',e=>{
 
 // ── PORT TOUR ─────────────────────────────────────────────────────────────────
 async function tourPort(){
-  addChat('assistant','⚓ Bắt đầu Tour Cảng biển Đông Nam Bộ – Chuỗi Cung ứng Xuất khẩu...');
+  addChat('assistant','⚓ BẮT ĐẦU TOUR CẢNG BIỂN ĐÔNG NAM BỘ – CHUỖI CUNG ỨNG XUẤT KHẨU...');
   const stops=[
     {lon:106.9000,lat:10.7500,h:120000,pitch:-30,label:'🗺️ Vùng Kinh tế Trọng điểm Phía Nam – Mạng lưới KCN & Cảng biển'},
     {lon:106.9503,lat:10.9776,h:1500,pitch:-55,label:'🏭 Xuất phát: KCN Long Thành (488ha) – Đồng Nai · Hàng vào cảng: 35km'},
@@ -565,12 +587,19 @@ async function tourPort(){
     {lon:106.7000,lat:10.6500,h:2000,pitch:-40,label:'🚢 Cảng SPCT Hiệp Phước – HCM · 1.5M TEU/năm · Vinalines · Hàng xuất Châu Phi/Trung Đông'},
     {lon:106.9000,lat:10.7500,h:80000,pitch:-35,label:'✅ Tổng kết: KCN Long Thành → 3 cụm cảng trong 45km · 10M+ TEU/năm · Chuỗi cung ứng xuất khẩu hoàn chỉnh'},
   ];
-  for(const s of stops){
+  for(let i=0;i<stops.length;i++){
+    const s=stops[i];
     viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(s.lon,s.lat,s.h),orientation:{heading:0,pitch:Cesium.Math.toRadians(s.pitch),roll:0},duration:2.5});
-    await new Promise(r=>setTimeout(r,3200));
-    addChat('assistant',s.label);
+    await new Promise(r=>setTimeout(r,800));
+    const parts = s.label.split(' · ');
+    showTourBanner(i+1, stops.length, parts[0], parts.slice(1).join(' · '));
+    addChat('assistant','⚓ '+(i+1)+'/'+stops.length+' · '+s.label);
+    await new Promise(r=>setTimeout(r,2800));
   }
-  addChat('assistant','⚓ Tour Cảng hoàn thành! Từ KCN Long Thành đến 3 cảng lớn nhất chỉ 30–45 phút.');
+  hideTourBanner();
+  addChat('assistant','✅ TOUR CẢNG HOÀN THÀNH! Đang trở về Landmark 81...');
+  await new Promise(r=>setTimeout(r,500));
+  flyToLandmark81();
 }
 
 // ── CITY TOURS ────────────────────────────────────────────────────────────────
@@ -603,13 +632,20 @@ async function tourCity(city){
   };
   const c=CITIES[city];
   if(!c)return;
-  addChat('assistant',c.label+' – Bắt đầu tour 3D...');
-  for(const s of c.stops){
+  addChat('assistant',c.label+' – BẮT ĐẦU TOUR 3D PRO GLOBAL...');
+  for(let i=0;i<c.stops.length;i++){
+    const s=c.stops[i];
     viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(s.lon,s.lat,s.h),orientation:{heading:0,pitch:Cesium.Math.toRadians(s.pitch),roll:0},duration:2.5});
-    await new Promise(r=>setTimeout(r,3200));
-    addChat('assistant',s.label);
+    await new Promise(r=>setTimeout(r,800));
+    const parts = s.label.split(' · ');
+    showTourBanner(i+1, c.stops.length, parts[0], parts.slice(1).join(' · '));
+    addChat('assistant','🌏 '+(i+1)+'/'+c.stops.length+' · '+s.label);
+    await new Promise(r=>setTimeout(r,2800));
   }
-  addChat('assistant','✅ Tour '+c.label+' hoàn thành! Gõ tên địa điểm vào ô search để bay đến bất kỳ đâu trên thế giới.');
+  hideTourBanner();
+  addChat('assistant','✅ TOUR '+c.label.toUpperCase()+' HOÀN THÀNH! Đang trở về Landmark 81...');
+  await new Promise(r=>setTimeout(r,500));
+  flyToLandmark81();
 }
 
 
@@ -696,6 +732,40 @@ function togglePorts(){
   btn.style.background=showPorts?'#0c2a3d':'#1e293b';
   btn.style.borderColor=showPorts?'#0ea5e9':'#334155';
   btn.style.color=showPorts?'#38bdf8':'#64748b';
+}
+
+
+// ── LANDMARK 81 HOME ──────────────────────────────────────────────────────────
+const LANDMARK81 = {lon:106.7220, lat:10.7950, h:1200, pitch:-35, heading:20};
+
+function flyToLandmark81(){
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(LANDMARK81.lon, LANDMARK81.lat, LANDMARK81.h),
+    orientation: {
+      heading: Cesium.Math.toRadians(LANDMARK81.heading),
+      pitch: Cesium.Math.toRadians(LANDMARK81.pitch),
+      roll: 0
+    },
+    duration: 3,
+  });
+}
+
+// ── TOUR BANNER CONTROL ───────────────────────────────────────────────────────
+function showTourBanner(stepNum, totalSteps, text, sub){
+  const banner = document.getElementById('tour-banner');
+  document.getElementById('tour-step-num').textContent = 'ĐIỂM ' + stepNum + ' / ' + totalSteps;
+  document.getElementById('tour-banner-text').textContent = text;
+  document.getElementById('tour-banner-sub').textContent = sub || '';
+  banner.style.display = 'block';
+
+  // Ẩn sau 2.5 giây
+  clearTimeout(window._bannerTimer);
+  window._bannerTimer = setTimeout(()=>{ banner.style.display='none'; }, 2500);
+}
+
+function hideTourBanner(){
+  document.getElementById('tour-banner').style.display = 'none';
+  clearTimeout(window._bannerTimer);
 }
 
 </script>
