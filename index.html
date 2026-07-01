@@ -171,8 +171,45 @@ const INFRA=[
   {lon:106.9510,lat:10.9748,icon:"⚡",label:"Trạm 110kV"},
   {lon:106.9528,lat:10.9748,icon:"💧",label:"WWTP"},
   {lon:106.9490,lat:10.9748,icon:"🚒",label:"PCCC"},
-  {lon:106.9510,lat:10.9802,icon:"🏢",label:"Ban QL"},
+  {lon:106.9510,lat:10.9802,icon:"🏢",label:"Ban QL KCN"},
 ];
+
+// ── KCN THỰC TẾ ĐỒNG NAI & VÙNG PHỤ CẬN ──────────────────────────────────
+const KCN_REAL = [
+  // Đồng Nai
+  {lon:106.9503,lat:10.9776,icon:"🏭",label:"KCN Long Thành",sub:"Đồng Nai · 488ha · FDI Hàn/Nhật",color:"#22c55e"},
+  {lon:107.0100,lat:10.9900,icon:"🏭",label:"KCN Nhơn Trạch 1-6",sub:"Đồng Nai · 1.700ha · Samsung/Panasonic",color:"#22c55e"},
+  {lon:106.8200,lat:10.9000,icon:"🏭",label:"KCN Biên Hòa 1-2",sub:"Đồng Nai · 365ha · Oldest KCN VN 1963",color:"#f59e0b"},
+  {lon:106.8800,lat:11.0200,icon:"🏭",label:"KCN Amata Biên Hòa",sub:"Đồng Nai · 700ha · Smart Eco City",color:"#22c55e"},
+  {lon:106.9700,lat:11.1000,icon:"🏭",label:"KCN Định Quán",sub:"Đồng Nai · 200ha",color:"#94a3b8"},
+  {lon:107.1500,lat:10.8500,icon:"🏭",label:"KCN Giang Điền",sub:"Đồng Nai · 529ha · Logistics Hub",color:"#22c55e"},
+  // BRVT
+  {lon:107.0623,lat:10.6075,icon:"🏭",label:"KCN Phú Mỹ 1-3",sub:"BRVT · 2.040ha · Thép/Hóa chất",color:"#3b82f6"},
+  {lon:107.0900,lat:10.5500,icon:"🏭",label:"KCN Mỹ Xuân A-B",sub:"BRVT · 850ha · Petrochemical",color:"#3b82f6"},
+  {lon:107.0200,lat:10.4800,icon:"🏭",label:"KCN Cái Mép",sub:"BRVT · 2.000ha · Port-Industrial",color:"#3b82f6"},
+  // Bình Dương
+  {lon:106.7200,lat:11.0000,icon:"🏭",label:"VSIP 1-3 Bình Dương",sub:"BD · 4.000ha · VN-Singapore · Lego/Pandora",color:"#a78bfa"},
+  {lon:106.6800,lat:10.9500,icon:"🏭",label:"KCN Becamex VSIP",sub:"BD · Thủ Dầu Một · Smart City",color:"#a78bfa"},
+  {lon:106.7500,lat:11.1000,icon:"🏭",label:"KCN Bàu Bàng",sub:"BD · 4.457ha · Foxconn/Intel",color:"#a78bfa"},
+  // TPHCM
+  {lon:106.6200,lat:10.8500,icon:"🏭",label:"KCN Tân Bình",sub:"HCM · 127ha · Cảng hàng không",color:"#f59e0b"},
+  {lon:106.7800,lat:10.7200,icon:"🏭",label:"KCX Linh Trung 1-2",sub:"HCM · 702ha · Điện tử/May mặc",color:"#f59e0b"},
+  {lon:106.7000,lat:10.6500,icon:"🏭",label:"KCN Hiệp Phước",sub:"HCM · 1.686ha · Port-Logistics",color:"#f59e0b"},
+];
+
+// ── CẢNG BIỂN THỰC TẾ ────────────────────────────────────────────────────────
+const PORTS_REAL = [
+  {lon:107.0152,lat:10.5018,icon:"⚓",label:"Cụm Cảng Cái Mép – Thị Vải",sub:"BRVT · CMIT/TCIT/SPCT · 160.000 DWT · Tuyến thẳng Mỹ/EU",color:"#3b82f6"},
+  {lon:107.0300,lat:10.5300,icon:"⚓",label:"Cảng TCIT Tân Cảng Cái Mép",sub:"BRVT · 2.4M TEU/năm · Merlion/CMA CGM",color:"#3b82f6"},
+  {lon:107.0050,lat:10.4900,icon:"⚓",label:"Cảng CMIT Cái Mép",sub:"BRVT · PSA Singapore · 1.5M TEU/năm",color:"#3b82f6"},
+  {lon:106.7525,lat:10.7742,icon:"🚢",label:"Cảng Tân Cảng Cát Lái",sub:"HCM · 5.5M TEU/năm · Container lớn nhất VN",color:"#22c55e"},
+  {lon:106.7200,lat:10.7600,icon:"🚢",label:"Cảng SPCT Hiệp Phước",sub:"HCM · 1.5M TEU/năm · Vinalines",color:"#22c55e"},
+  {lon:107.0623,lat:10.6075,icon:"🏗️",label:"Cảng Phú Mỹ – BRVT",sub:"BRVT · Hàng rời/Tổng hợp · 1.2M TEU",color:"#f59e0b"},
+  {lon:107.0400,lat:10.6200,icon:"🏗️",label:"Cảng Gò Dầu B",sub:"BRVT · Hóa chất/Thép · Petrolimex",color:"#f59e0b"},
+  {lon:106.6800,lat:10.7800,icon:"⛽",label:"Cảng Saigon Newport",sub:"HCM · Quân cảng + Thương mại · Trung Đông/Châu Phi",color:"#94a3b8"},
+];
+
+let kcnEntities=[], portEntities=[], showKCN=true, showPorts=true;
 const STATUS={
   available:{fill:"#22c55e",line:"#22c55e",badge:"#052e16",badgeT:"#22c55e",label:"Còn trống"},
   negotiating:{fill:"#f59e0b",line:"#f59e0b",badge:"#1c1400",badgeT:"#f59e0b",label:"Đàm phán"},
@@ -264,6 +301,10 @@ window.addEventListener('load',()=>{
       viewer.scene.primitives.add(osmBuildings);
     }).catch(function(e){ console.warn('OSM Buildings:', e); });
   } catch(e) { console.warn('OSM Buildings not available:', e); }
+
+  // Load KCN & Port labels
+  loadKCNLabels();
+  loadPortLabels();
 
   viewer.camera.flyTo({
     destination:Cesium.Cartesian3.fromDegrees(106.952,10.976,1800),
@@ -511,15 +552,18 @@ document.addEventListener('click',e=>{
 
 // ── PORT TOUR ─────────────────────────────────────────────────────────────────
 async function tourPort(){
-  addChat('assistant','⚓ Bắt đầu Tour Cảng biển Đông Nam Bộ...');
+  addChat('assistant','⚓ Bắt đầu Tour Cảng biển Đông Nam Bộ – Chuỗi Cung ứng Xuất khẩu...');
   const stops=[
-    {lon:106.9503,lat:10.9776,h:50000,pitch:-35,label:'🗺️ Mạng lưới cảng biển kết nối KCN Long Thành'},
-    {lon:106.9503,lat:10.9776,h:1500,pitch:-55,label:'🏭 Xuất phát: KCN Long Thành – Đồng Nai'},
-    {lon:106.9626,lat:10.8612,h:800,pitch:-45,label:'✈️ Sân bay Quốc tế Long Thành – 8km, 10 phút'},
-    {lon:107.0152,lat:10.5018,h:3000,pitch:-40,label:'⚓ Cảng Cái Mép – Thị Vải: Cảng nước sâu lớn nhất VN, tàu 160.000 DWT, tuyến thẳng Mỹ & EU'},
-    {lon:107.0623,lat:10.6075,h:2500,pitch:-40,label:'🏗️ Cảng Phú Mỹ – Bà Rịa: Container & hàng rời, 40km từ KCN'},
-    {lon:106.7525,lat:10.7742,h:2000,pitch:-40,label:'🚢 Cảng Cát Lái – TP.HCM: 5.5 triệu TEU/năm, cảng container lớn nhất VN'},
-    {lon:106.9503,lat:10.9776,h:1500,pitch:-55,label:'✅ Tổng kết: KCN Long Thành – trung tâm logistics chiến lược Đông Nam Bộ'},
+    {lon:106.9000,lat:10.7500,h:120000,pitch:-30,label:'🗺️ Vùng Kinh tế Trọng điểm Phía Nam – Mạng lưới KCN & Cảng biển'},
+    {lon:106.9503,lat:10.9776,h:1500,pitch:-55,label:'🏭 Xuất phát: KCN Long Thành (488ha) – Đồng Nai · Hàng vào cảng: 35km'},
+    {lon:106.9626,lat:10.8612,h:1000,pitch:-45,label:'✈️ Sân bay Quốc tế Long Thành · 8km · 100M khách/năm (2026) · Tuyến Air Cargo châu Á'},
+    {lon:107.0152,lat:10.5018,h:4000,pitch:-40,label:'⚓ Cụm Cảng Cái Mép – Thị Vải · BRVT · Sâu 14-16m · Tàu 160.000 DWT · Tuyến thẳng: USA/EU/NE Asia'},
+    {lon:107.0300,lat:10.5300,h:1500,pitch:-45,label:'⚓ Cảng TCIT – Tân Cảng Cái Mép · 2.4M TEU/năm · CMA CGM/Merlion · Hàng Đông Nam Á'},
+    {lon:107.0050,lat:10.4900,h:1500,pitch:-45,label:'⚓ Cảng CMIT – Cái Mép International · PSA Singapore · 1.5M TEU/năm · Maersk/MSC'},
+    {lon:107.0623,lat:10.6075,h:2500,pitch:-40,label:'🏗️ Cảng Phú Mỹ – Bà Rịa · Hàng rời/Thép/Hóa chất · KCN Phú Mỹ 2.040ha cạnh bên'},
+    {lon:106.7525,lat:10.7742,h:2000,pitch:-40,label:'🚢 Tân Cảng Cát Lái – TP.HCM · 5.5M TEU/năm · Cảng Container lớn nhất VN · Nội địa + ASEAN'},
+    {lon:106.7000,lat:10.6500,h:2000,pitch:-40,label:'🚢 Cảng SPCT Hiệp Phước – HCM · 1.5M TEU/năm · Vinalines · Hàng xuất Châu Phi/Trung Đông'},
+    {lon:106.9000,lat:10.7500,h:80000,pitch:-35,label:'✅ Tổng kết: KCN Long Thành → 3 cụm cảng trong 45km · 10M+ TEU/năm · Chuỗi cung ứng xuất khẩu hoàn chỉnh'},
   ];
   for(const s of stops){
     viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(s.lon,s.lat,s.h),orientation:{heading:0,pitch:Cesium.Math.toRadians(s.pitch),roll:0},duration:2.5});
@@ -566,6 +610,92 @@ async function tourCity(city){
     addChat('assistant',s.label);
   }
   addChat('assistant','✅ Tour '+c.label+' hoàn thành! Gõ tên địa điểm vào ô search để bay đến bất kỳ đâu trên thế giới.');
+}
+
+
+// ── KCN & PORT LABELS ─────────────────────────────────────────────────────────
+function loadKCNLabels(){
+  KCN_REAL.forEach(k=>{
+    const e=viewer.entities.add({
+      position:Cesium.Cartesian3.fromDegrees(k.lon,k.lat,50),
+      label:{
+        text:k.icon+' '+k.label+'\n'+k.sub,
+        font:'700 12px sans-serif',
+        fillColor:Cesium.Color.fromCssColorString(k.color),
+        outlineColor:Cesium.Color.BLACK,outlineWidth:2,
+        style:Cesium.LabelStyle.FILL_AND_OUTLINE,
+        verticalOrigin:Cesium.VerticalOrigin.BOTTOM,
+        horizontalOrigin:Cesium.HorizontalOrigin.CENTER,
+        disableDepthTestDistance:Number.POSITIVE_INFINITY,
+        scaleByDistance:new Cesium.NearFarScalar(1000,1.1,200000,0.3),
+        pixelOffset:new Cesium.Cartesian2(0,-10),
+      },
+      billboard:{
+        image:createDot(k.color,14),
+        width:14,height:14,
+        verticalOrigin:Cesium.VerticalOrigin.CENTER,
+        disableDepthTestDistance:Number.POSITIVE_INFINITY,
+        scaleByDistance:new Cesium.NearFarScalar(1000,1.2,200000,0.4),
+      },
+    });
+    kcnEntities.push(e);
+  });
+}
+
+function loadPortLabels(){
+  PORTS_REAL.forEach(p=>{
+    const e=viewer.entities.add({
+      position:Cesium.Cartesian3.fromDegrees(p.lon,p.lat,50),
+      label:{
+        text:p.icon+' '+p.label+'\n'+p.sub,
+        font:'700 12px sans-serif',
+        fillColor:Cesium.Color.fromCssColorString(p.color),
+        outlineColor:Cesium.Color.BLACK,outlineWidth:2,
+        style:Cesium.LabelStyle.FILL_AND_OUTLINE,
+        verticalOrigin:Cesium.VerticalOrigin.BOTTOM,
+        horizontalOrigin:Cesium.HorizontalOrigin.CENTER,
+        disableDepthTestDistance:Number.POSITIVE_INFINITY,
+        scaleByDistance:new Cesium.NearFarScalar(500,1.2,150000,0.3),
+        pixelOffset:new Cesium.Cartesian2(0,-10),
+      },
+      billboard:{
+        image:createDot(p.color,16),
+        width:16,height:16,
+        verticalOrigin:Cesium.VerticalOrigin.CENTER,
+        disableDepthTestDistance:Number.POSITIVE_INFINITY,
+        scaleByDistance:new Cesium.NearFarScalar(500,1.2,150000,0.4),
+      },
+    });
+    portEntities.push(e);
+  });
+}
+
+function createDot(color,size){
+  const c=document.createElement('canvas');
+  c.width=size;c.height=size;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle=color;
+  ctx.beginPath();ctx.arc(size/2,size/2,size/2-1,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='white';ctx.lineWidth=1.5;ctx.stroke();
+  return c.toDataURL();
+}
+
+function toggleKCN(){
+  showKCN=!showKCN;
+  kcnEntities.forEach(e=>e.show=showKCN);
+  const btn=document.getElementById('btn-kcn');
+  btn.style.background=showKCN?'#172554':'#1e293b';
+  btn.style.borderColor=showKCN?'#2563eb':'#334155';
+  btn.style.color=showKCN?'#93c5fd':'#64748b';
+}
+
+function togglePorts(){
+  showPorts=!showPorts;
+  portEntities.forEach(e=>e.show=showPorts);
+  const btn=document.getElementById('btn-ports');
+  btn.style.background=showPorts?'#0c2a3d':'#1e293b';
+  btn.style.borderColor=showPorts?'#0ea5e9':'#334155';
+  btn.style.color=showPorts?'#38bdf8':'#64748b';
 }
 
 </script>
