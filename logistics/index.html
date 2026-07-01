@@ -454,16 +454,7 @@ function showLogistics(){
     portEntities.push(e);
   });
 
-  addChat('assistant','🚢 **Logistics Layer** đã bật!
-
-Hiển thị tuyến kết nối từ KCN Long Thành đến:
-• ⚓ Cảng Cái Mép (35km) – tàu 160.000 DWT
-• 🚢 Cảng Cát Lái (45km) – 5.5M TEU/năm
-• 🏗️ Cảng Phú Mỹ (40km)
-• ✈️ Sân bay Long Thành (8km)
-• 🛣️ Cao tốc HCM-LT (2km)
-
-Click vào icon để xem chi tiết từng cảng!');
+  addChat('assistant','🚢 Logistics Layer đã bật! Hiển thị 5 tuyến kết nối: Cảng Cái Mép 35km, Cảng Cát Lái 45km, Cảng Phú Mỹ 40km, Sân bay Long Thành 8km, Cao tốc 2km. Click icon để xem chi tiết!');
 }
 
 function hideLogistics(){
@@ -533,9 +524,7 @@ async function startLogisticsTour(){
     await new Promise(r=>setTimeout(r,3200));
     addChat('assistant',s.label);
   }
-  addChat('assistant','✅ Tour Logistics hoàn thành!
-
-KCN Long Thành có vị trí chiến lược nhất Đông Nam Bộ – kết nối 3 cảng biển lớn và sân bay quốc tế mới trong bán kính 45km.');
+  addChat('assistant','✅ Tour Logistics hoàn thành! KCN Long Thành kết nối 3 cảng biển lớn và sân bay quốc tế trong bán kính 45km – vị trí chiến lược nhất Đông Nam Bộ.');
 }
 
 </script>
