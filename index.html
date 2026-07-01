@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
-<title>Đồng Nai City Center | PROtech · PROBIM Platform</title>
+<title>Đồng Nai City Center | PROtech AI</title>
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.142/Build/Cesium/Cesium.js"></script>
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.142/Build/Cesium/Widgets/widgets.css" rel="stylesheet"/>
 <style>
@@ -63,7 +63,16 @@ input::placeholder{color:#334155}
 <body>
 <div id="app">
   <div id="topbar">
-    <div><div class="brand-sub">PROtech · PROBIM Platform</div><div class="brand-name">ĐỒNG NAI CITY CENTER · KHU CÔNG NGHIỆP / INDUSTRY PARK · CẢNG / PORT · LOGISTICS</div></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <!-- PRO LOGO -->
+      <div style="width:42px;height:42px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px #7c3aed55">
+        <span style="font-size:15px;font-weight:900;color:#fff;letter-spacing:-1px;font-family:monospace">PRO</span>
+      </div>
+      <div>
+        <div style="font-size:9px;color:#3b82f6;text-transform:uppercase;letter-spacing:3px;font-weight:600">PROtech AI · PRO Global 3D</div>
+        <div class="brand-name">ĐỒNG NAI CITY CENTER · KHU CÔNG NGHIỆP / INDUSTRY PARK · CẢNG / PORT · LOGISTICS</div>
+      </div>
+    </div>
     <div class="live"><div class="live-dot"></div><span class="live-txt">LIVE 3D</span></div>
     <!-- SEARCH BOX -->
     <div id="search-box" style="display:flex;align-items:center;gap:8px;background:#1e293b;border:1px solid #334155;border-radius:24px;padding:6px 14px;min-width:300px;position:relative">
@@ -117,7 +126,7 @@ input::placeholder{color:#334155}
     <div id="chat">
       <div id="chat-hdr">
         <div class="avatar">🤖</div>
-        <div><div style="font-size:13px;font-weight:700;color:#f1f5f9">Sales AI · Claude</div><div style="font-size:10px;color:#22c55e">● Anthropic API</div></div>
+        <div><div style="font-size:13px;font-weight:700;color:#f1f5f9">PROtech AI</div><div style="font-size:10px;color:#22c55e">● PRO Global 3D</div></div>
       </div>
       <div id="chat-msgs"></div>
       <div id="quick">
@@ -493,6 +502,66 @@ function hideDropdown(){
 document.addEventListener('click',e=>{
   if(!document.getElementById('search-box').contains(e.target)) hideDropdown();
 });
+
+
+// ── PORT TOUR ─────────────────────────────────────────────────────────────────
+async function tourPort(){
+  addChat('assistant','⚓ Bắt đầu Tour Cảng biển Đông Nam Bộ...');
+  const stops=[
+    {lon:106.9503,lat:10.9776,h:50000,pitch:-35,label:'🗺️ Mạng lưới cảng biển kết nối KCN Long Thành'},
+    {lon:106.9503,lat:10.9776,h:1500,pitch:-55,label:'🏭 Xuất phát: KCN Long Thành – Đồng Nai'},
+    {lon:106.9626,lat:10.8612,h:800,pitch:-45,label:'✈️ Sân bay Quốc tế Long Thành – 8km, 10 phút'},
+    {lon:107.0152,lat:10.5018,h:3000,pitch:-40,label:'⚓ Cảng Cái Mép – Thị Vải: Cảng nước sâu lớn nhất VN, tàu 160.000 DWT, tuyến thẳng Mỹ & EU'},
+    {lon:107.0623,lat:10.6075,h:2500,pitch:-40,label:'🏗️ Cảng Phú Mỹ – Bà Rịa: Container & hàng rời, 40km từ KCN'},
+    {lon:106.7525,lat:10.7742,h:2000,pitch:-40,label:'🚢 Cảng Cát Lái – TP.HCM: 5.5 triệu TEU/năm, cảng container lớn nhất VN'},
+    {lon:106.9503,lat:10.9776,h:1500,pitch:-55,label:'✅ Tổng kết: KCN Long Thành – trung tâm logistics chiến lược Đông Nam Bộ'},
+  ];
+  for(const s of stops){
+    viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(s.lon,s.lat,s.h),orientation:{heading:0,pitch:Cesium.Math.toRadians(s.pitch),roll:0},duration:2.5});
+    await new Promise(r=>setTimeout(r,3200));
+    addChat('assistant',s.label);
+  }
+  addChat('assistant','⚓ Tour Cảng hoàn thành! Từ KCN Long Thành đến 3 cảng lớn nhất chỉ 30–45 phút.');
+}
+
+// ── CITY TOURS ────────────────────────────────────────────────────────────────
+async function tourCity(city){
+  const CITIES={
+    singapore:{
+      lon:103.8198,lat:1.3521,
+      label:'🇸🇬 Singapore',
+      stops:[
+        {lon:103.8198,lat:1.3521,h:80000,pitch:-30,label:'🌏 Nhìn toàn cảnh Singapore từ trên cao'},
+        {lon:103.8521,lat:1.2780,h:3000,pitch:-40,label:'🚢 Cảng Singapore – Cảng container số 1 thế giới, 37 triệu TEU/năm'},
+        {lon:103.9915,lat:1.3644,h:2000,pitch:-45,label:'✈️ Sân bay Changi – Hub hàng không số 1 châu Á'},
+        {lon:103.8554,lat:1.2800,h:1500,pitch:-50,label:'🏙️ Marina Bay – Trung tâm tài chính Singapore'},
+        {lon:103.7070,lat:1.3100,h:2000,pitch:-45,label:'🏭 Jurong Island – Khu công nghiệp hóa chất, model KCN sinh thái'},
+        {lon:103.8198,lat:1.3521,h:50000,pitch:-35,label:'💡 Khoảng cách từ KCN Long Thành → Singapore: ~1 giờ bay'},
+      ]
+    },
+    hongkong:{
+      lon:114.1694,lat:22.3193,
+      label:'🇭🇰 Hong Kong',
+      stops:[
+        {lon:114.1694,lat:22.3193,h:80000,pitch:-30,label:'🌏 Nhìn toàn cảnh Hong Kong từ trên cao'},
+        {lon:114.1277,lat:22.3000,h:3000,pitch:-45,label:'🚢 Cảng Kwai Tsing – Cảng container lớn nhất HK, 18 triệu TEU/năm'},
+        {lon:113.9148,lat:22.3080,h:2000,pitch:-45,label:'✈️ Sân bay Quốc tế Hong Kong (Lantau) – Top 10 thế giới'},
+        {lon:114.1588,lat:22.2855,h:1500,pitch:-50,label:'🏙️ Victoria Harbour – Trung tâm tài chính quốc tế'},
+        {lon:114.2200,lat:22.3200,h:2000,pitch:-45,label:'🏭 Khu công nghiệp Kowloon – Model chuyển đổi công nghiệp thành đô thị'},
+        {lon:114.1694,lat:22.3193,h:50000,pitch:-35,label:'💡 Khoảng cách từ KCN Long Thành → HK: ~2 giờ bay'},
+      ]
+    }
+  };
+  const c=CITIES[city];
+  if(!c)return;
+  addChat('assistant',c.label+' – Bắt đầu tour 3D...');
+  for(const s of c.stops){
+    viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(s.lon,s.lat,s.h),orientation:{heading:0,pitch:Cesium.Math.toRadians(s.pitch),roll:0},duration:2.5});
+    await new Promise(r=>setTimeout(r,3200));
+    addChat('assistant',s.label);
+  }
+  addChat('assistant','✅ Tour '+c.label+' hoàn thành! Gõ tên địa điểm vào ô search để bay đến bất kỳ đâu trên thế giới.');
+}
 
 </script>
 </body>
