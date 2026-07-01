@@ -641,6 +641,44 @@ document.addEventListener('click',e=>{
 });
 
 
+
+// ── MAIN KCN TOUR ─────────────────────────────────────────────────────────────
+async function startTour(){
+  if(touring){tourCancel=true;return;}
+  tourCancel=false;touring=true;
+  const btn=document.querySelector('[onclick="startTour()"]');
+  if(btn){btn.textContent='⏹ DỪNG';btn.style.background='#7c3aed';}
+  addChat('assistant','🎬 BẮT ĐẦU AUTO TOUR KCN LONG THÀNH – ĐỒNG NAI...');
+  const stops=[
+    {lon:106.9503,lat:10.9776,h:3000, pitch:-55,heading:0,  label:'KCN LONG THÀNH – ĐỒNG NAI',          sub:'488 HA · FDI HÀN QUỐC / NHẬT BẢN / ĐAN MẠCH'},
+    {lon:106.9465,lat:10.9776,h:300,  pitch:-40,heading:20, label:'CỔNG CHÍNH KCN LONG THÀNH',           sub:'KẾT NỐI CAO TỐC HCM–LONG THÀNH–DẦU GIÂY · 2KM'},
+    {lon:106.9503,lat:10.9791,h:500,  pitch:-50,heading:10, label:'ZONE A – ĐƯỜNG TRỤC 25M',             sub:'LÔ A1–A4 · 95 USD/M²/KỲ · CÒN TRỐNG: A1, A3'},
+    {lon:106.9503,lat:10.9777,h:500,  pitch:-50,heading:10, label:'ZONE B – ĐƯỜNG TRỤC 30M',             sub:'LÔ B1–B4 · 85 USD/M²/KỲ · NHÀ MÁY NẶNG & LOGISTICS'},
+    {lon:106.9503,lat:10.9762,h:500,  pitch:-50,heading:10, label:'ZONE C – ĐƯỜNG TRỤC 40M',             sub:'LÔ C1–C4 · 75 USD/M²/KỲ · CHIP BÁN DẪN & DATA CENTER'},
+    {lon:106.9510,lat:10.9748,h:350,  pitch:-45,heading:20, label:'HẠ TẦNG KỸ THUẬT TRUNG TÂM',         sub:'TRẠM 110KV – 120 MVA · WWTP 8.000 M³/NGÀY · PCCC'},
+    {lon:106.9626,lat:10.8612,h:800,  pitch:-45,heading:0,  label:'SÂN BAY QUỐC TẾ LONG THÀNH',         sub:'CHỈ 8KM · 100 TRIỆU KHÁCH/NĂM · AIR CARGO CHÂU Á'},
+    {lon:106.9503,lat:10.9776,h:8000, pitch:-40,heading:0,  label:'KCN LONG THÀNH – VỊ TRÍ CHIẾN LƯỢC', sub:'35KM → CẢNG CÁI MẾP · 8KM → SÂN BAY · 2KM → CAO TỐC'},
+  ];
+  for(let i=0;i<stops.length;i++){
+    if(tourCancel)break;
+    const s=stops[i];
+    viewer.camera.flyTo({
+      destination:Cesium.Cartesian3.fromDegrees(s.lon,s.lat,s.h),
+      orientation:{heading:Cesium.Math.toRadians(s.heading||0),pitch:Cesium.Math.toRadians(s.pitch),roll:0},
+      duration:2.5
+    });
+    await new Promise(r=>setTimeout(r,800));
+    showTourBanner(i+1,stops.length,s.label,s.sub);
+    addChat('assistant','📍 '+(i+1)+'/'+stops.length+' · '+s.label);
+    await new Promise(r=>setTimeout(r,2800));
+  }
+  hideTourBanner();
+  touring=false;tourCancel=false;
+  if(btn){btn.textContent='🎬 TOUR KCN';btn.style.background='linear-gradient(135deg,#7c3aed,#1d4ed8)';}
+  addChat('assistant','✅ TOUR KCN HOÀN THÀNH! Đang trở về Landmark 81...');
+  setTimeout(flyToLandmark81,500);
+}
+
 // ── PORT TOUR ─────────────────────────────────────────────────────────────────
 async function tourPort(){
   addChat('assistant','⚓ BẮT ĐẦU TOUR CẢNG BIỂN ĐÔNG NAM BỘ – CHUỖI CUNG ỨNG XUẤT KHẨU...');
