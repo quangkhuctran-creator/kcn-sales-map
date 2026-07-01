@@ -7,6 +7,8 @@
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.142/Build/Cesium/Cesium.js"></script>
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.142/Build/Cesium/Widgets/widgets.css" rel="stylesheet"/>
 <style>
+
+
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100vh;overflow:hidden;background:#060b14;color:#e2e8f0;font-family:-apple-system,'Segoe UI',sans-serif}
 #app{display:flex;flex-direction:column;height:100vh}
@@ -58,35 +60,53 @@ html,body{height:100vh;overflow:hidden;background:#060b14;color:#e2e8f0;font-fam
 .cesium-widget-credits,.cesium-credit-logoContainer{display:none!important}
 input::placeholder{color:#334155}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:2px}
+
+
+/* Fix layout */
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+#main{flex:1;display:flex;overflow:hidden;position:relative;min-height:0}
+#cesiumContainer{flex:1;min-width:0}
+#chat{width:340px;background:#0a0f1a;border-left:1px solid #1e293b;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+#tour-bar{background:#0d1117;border-top:1px solid #1e293b;padding:7px 14px;display:flex;align-items:center;gap:7px;flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+#tour-bar::-webkit-scrollbar{display:none}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100vh;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+#main{flex:1;display:flex;min-height:0;overflow:hidden;position:relative}
+#cesiumContainer{flex:1;min-width:0;min-height:0}
+#chat{width:340px;background:#0a0f1a;border-left:1px solid #1e293b;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;min-height:0}
+#tour-bar{background:#0d1117;border-top:1px solid #1e293b;padding:7px 14px;display:flex;align-items:center;gap:7px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;z-index:10}
+#tour-bar::-webkit-scrollbar{display:none}
+.cesium-widget-credits,.cesium-credit-logoContainer{display:none!important}
 </style>
 </head>
 <body>
 <div id="app">
+
+  <!-- 1. TOPBAR -->
   <div id="topbar">
     <div style="display:flex;align-items:center;gap:12px">
-      <!-- PRO LOGO -->
       <div style="width:42px;height:42px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px #7c3aed55">
         <span style="font-size:15px;font-weight:900;color:#fff;letter-spacing:-1px;font-family:monospace">PRO</span>
       </div>
       <div>
-        <div style="font-size:9px;color:#3b82f6;text-transform:uppercase;letter-spacing:3px;font-weight:600">PROtech AI · PRO Global 3D</div>
+        <div class="brand-sub">PROtech AI · PRO Global 3D</div>
         <div class="brand-name">ĐỒNG NAI CITY CENTER · KHU CÔNG NGHIỆP / INDUSTRY PARK · CẢNG / PORT · LOGISTICS</div>
       </div>
     </div>
-    <div class="live"><div class="live-dot"></div><span class="live-txt">LIVE 3D</span></div>
-    <!-- SEARCH BOX -->
-    <div id="search-box" style="display:flex;align-items:center;gap:8px;background:#1e293b;border:1px solid #334155;border-radius:24px;padding:6px 14px;min-width:300px;position:relative">
+    <div id="search-box" style="display:flex;align-items:center;gap:8px;background:#1e293b;border:1px solid #334155;border-radius:24px;padding:6px 14px;min-width:280px;position:relative">
       <span style="font-size:14px">🔍</span>
       <input id="search-inp" placeholder="Tìm địa điểm, quốc gia, khu vực..." autocomplete="off"
-        style="background:transparent;border:none;outline:none;color:#e2e8f0;font-size:12px;flex:1;min-width:200px"
-        oninput="onSearchInput(this.value)"
-        onkeydown="if(event.key==='Enter')doSearch(this.value)"
-      />
+        style="background:transparent;border:none;outline:none;color:#e2e8f0;font-size:12px;flex:1;min-width:180px"
+        oninput="onSearchInput(this.value)" onkeydown="if(event.key==='Enter')doSearch(this.value)"/>
       <button onclick="clearSearch()" id="search-clear" style="display:none;background:none;border:none;color:#64748b;cursor:pointer;font-size:14px;padding:0">✕</button>
-      <!-- DROPDOWN -->
       <div id="search-dropdown" style="display:none;position:absolute;top:42px;left:0;right:0;background:#0d1117;border:1px solid #334155;border-radius:12px;z-index:999;max-height:280px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.6)"></div>
     </div>
+    <div class="live"><div class="live-dot"></div><span class="live-txt">LIVE 3D</span></div>
   </div>
+
+  <!-- 2. STATS -->
   <div id="stats">
     <div class="stat"><div class="stat-l">Tổng lô</div><div class="stat-v" style="color:#94a3b8">12</div></div>
     <div class="stat"><div class="stat-l">Còn trống</div><div class="stat-v" style="color:#22c55e">5</div></div>
@@ -95,8 +115,14 @@ input::placeholder{color:#334155}
     <div class="stat"><div class="stat-l">Trống (ha)</div><div class="stat-v" style="color:#60a5fa">5.7</div></div>
     <div class="stat"><div class="stat-l">Giá từ</div><div class="stat-v" style="color:#a78bfa">75 USD</div></div>
   </div>
+
+  <!-- 3. MAIN (MAP + CHAT side by side) -->
   <div id="main">
+
+    <!-- CESIUM -->
     <div id="cesiumContainer"></div>
+
+    <!-- LEFT CONTROLS (absolute over map) -->
     <div id="controls">
       <div class="ctrl-box">
         <div class="ctrl-title">Lọc trạng thái</div>
@@ -107,6 +133,7 @@ input::placeholder{color:#334155}
       </div>
       <div class="ctrl-box">
         <div class="ctrl-title">Góc nhìn nhanh</div>
+        <button class="ctrl-btn" onclick="flyToLandmark81()" style="background:#172554;border-color:#2563eb;color:#93c5fd;font-weight:700">🏙️ Landmark 81</button>
         <button class="ctrl-btn" onclick="flyTo(106.952,10.976,2000000,-30)">🌍 Nhìn từ không gian</button>
         <button class="ctrl-btn" onclick="flyTo(106.952,10.976,1800,-55)">🏭 Toàn khu KCN</button>
         <button class="ctrl-btn" onclick="flyTo(106.9503,10.9791,600,-50)">📍 Zone A</button>
@@ -114,51 +141,41 @@ input::placeholder{color:#334155}
         <button class="ctrl-btn" onclick="flyTo(106.9503,10.9762,600,-50)">📍 Zone C</button>
         <button class="ctrl-btn" onclick="flyTo(106.9510,10.9748,400,-45)">⚡ Hạ tầng kỹ thuật</button>
       </div>
+      <div class="ctrl-box">
+        <div class="ctrl-title">Hiển thị Layer</div>
+        <button id="btn-kcn" class="ctrl-btn" onclick="toggleKCN()" style="background:#172554;border-color:#2563eb;color:#93c5fd">🏭 Khu công nghiệp (15)</button>
+        <button id="btn-ports" class="ctrl-btn" onclick="togglePorts()" style="background:#0c2a3d;border-color:#0ea5e9;color:#38bdf8">⚓ Cảng biển (8)</button>
+      </div>
     </div>
+
+    <!-- LEGEND -->
     <div id="legend">
       <div class="ctrl-title">Chú giải</div>
       <div class="leg-item"><div class="leg-box" style="background:#22c55e55;border:2px solid #22c55e"></div><span style="color:#22c55e">Còn trống</span></div>
       <div class="leg-item"><div class="leg-box" style="background:#f59e0b55;border:2px solid #f59e0b"></div><span style="color:#f59e0b">Đàm phán</span></div>
       <div class="leg-item"><div class="leg-box" style="background:#47556955;border:2px solid #64748b"></div><span style="color:#64748b">Đã thuê</span></div>
     </div>
-    
+
+    <!-- PLOT INFO POPUP -->
     <div id="info"></div>
 
-    <!-- TOUR BANNER - hiện giữa màn hình -->
-    <div id="tour-banner" style="
-      display:none;position:absolute;
-      top:50%;left:50%;transform:translate(-50%,-50%);
-      z-index:50;pointer-events:none;
-      text-align:center;
-    ">
-      <div style="
-        background:rgba(6,11,20,0.85);
-        border:2px solid #3b82f6;
-        border-radius:16px;
-        padding:18px 32px;
-        backdrop-filter:blur(16px);
-        box-shadow:0 0 40px rgba(59,130,246,0.4);
-        max-width:600px;
-      ">
-        <div id="tour-step-num" style="font-size:11px;color:#3b82f6;text-transform:uppercase;letter-spacing:3px;margin-bottom:6px;font-weight:700"></div>
-        <div id="tour-banner-text" style="font-size:22px;font-weight:800;color:#f1f5f9;line-height:1.4;text-transform:uppercase;letter-spacing:1px"></div>
-        <div id="tour-banner-sub" style="font-size:13px;color:#94a3b8;margin-top:6px"></div>
+    <!-- PORT INFO POPUP -->
+    <div id="port-info" style="position:absolute;top:60px;right:356px;z-index:25;width:260px;background:#0d1117f2;border:1px solid #3b82f6;border-radius:12px;padding:14px 16px;backdrop-filter:blur(12px);box-shadow:0 0 30px #3b82f633;display:none"></div>
+
+    <!-- LOGISTICS TOGGLE BTN -->
+    <button id="logistics-btn" onclick="toggleLogistics()" style="position:absolute;top:10px;right:356px;z-index:20;background:#0d1117dd;border:1px solid #1e293b;border-radius:10px;padding:8px 14px;font-size:11px;color:#60a5fa;cursor:pointer;backdrop-filter:blur(10px)">🚢 Logistics Layer</button>
+
+    <!-- TOUR BANNER: giữa màn hình, NỀN TRONG SUỐT -->
+    <div id="tour-banner" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:50;pointer-events:none;text-align:center;width:600px;max-width:90vw">
+      <div style="background:rgba(6,11,20,0.45);border:1.5px solid rgba(59,130,246,0.6);border-radius:16px;padding:22px 40px;backdrop-filter:blur(8px)">
+        <div id="tour-step-num" style="font-size:10px;color:#60a5fa;text-transform:uppercase;letter-spacing:3px;margin-bottom:8px;font-weight:700"></div>
+        <div id="tour-banner-text" style="font-size:26px;font-weight:900;color:#ffffff;line-height:1.3;text-transform:uppercase;letter-spacing:1px;text-shadow:0 2px 16px rgba(0,0,0,0.9),0 0 40px rgba(59,130,246,0.3)"></div>
+        <div id="tour-banner-sub" style="font-size:13px;color:#e2e8f0;margin-top:10px;text-shadow:0 1px 8px rgba(0,0,0,1);letter-spacing:.5px;font-weight:500"></div>
       </div>
     </div>
 
-  <!-- BOTTOM TOUR BAR - cố định, không bị overlap -->
-  <div style="background:#0d1117;border-top:1px solid #1e293b;padding:8px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0;z-index:30">
-    <span style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:2px;flex-shrink:0">PRO TOUR</span>
-    <div style="width:1px;height:20px;background:#1e293b;flex-shrink:0"></div>
-    <button onclick="startTour()" style="background:linear-gradient(135deg,#7c3aed,#1d4ed8);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px rgba(124,58,237,.5);white-space:nowrap;letter-spacing:.5px">🎬 TOUR KCN</button>
-    <button onclick="tourPort()" style="background:linear-gradient(135deg,#0e7490,#0369a1);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px rgba(14,116,144,.5);white-space:nowrap;letter-spacing:.5px">⚓ TOUR CẢNG</button>
-    <button onclick="tourCity('singapore')" style="background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px rgba(220,38,38,.5);white-space:nowrap;letter-spacing:.5px">🇸🇬 SINGAPORE</button>
-    <button onclick="tourCity('hongkong')" style="background:linear-gradient(135deg,#b45309,#92400e);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px rgba(180,83,9,.5);white-space:nowrap;letter-spacing:.5px">🇭🇰 HONG KONG</button>
-    <div style="flex:1"></div>
-    <button onclick="flyToLandmark81()" style="background:#172554;color:#93c5fd;border:1px solid #2563eb;border-radius:8px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🏙️ HOME</button>
-  </div>
-
-  <div id="chat">
+    <!-- CHAT PANEL (inside #main, right side) -->
+    <div id="chat">
       <div id="chat-hdr">
         <div class="avatar">🤖</div>
         <div><div style="font-size:13px;font-weight:700;color:#f1f5f9">PROtech AI</div><div style="font-size:10px;color:#22c55e">● PRO Global 3D</div></div>
@@ -166,7 +183,7 @@ input::placeholder{color:#334155}
       <div id="chat-msgs"></div>
       <div id="quick">
         <button class="qbtn" onclick="ask('Lô còn trống')">Lô còn trống</button>
-        <button class="qbtn" onclick="ask('Giá thuê Zone B')">Giá thuê</button>
+        <button class="qbtn" onclick="ask('Giá thuê')">Giá thuê</button>
         <button class="qbtn" onclick="ask('Hạ tầng điện')">Hạ tầng điện</button>
         <button class="qbtn" onclick="ask('Kết nối cảng biển')">Kết nối cảng</button>
         <button class="qbtn" onclick="ask('Thủ tục FDI')">Thủ tục FDI</button>
@@ -176,9 +193,26 @@ input::placeholder{color:#334155}
         <button id="chat-send" onclick="ask(document.getElementById('chat-inp').value)">➤</button>
       </div>
     </div>
+
+  </div><!-- END #main -->
+
+  <!-- 4. BOTTOM TOUR BAR (OUTSIDE #main, after it) -->
+  <div id="tour-bar">
+    <span style="font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:2px;flex-shrink:0;font-weight:700">PRO TOUR</span>
+    <div style="width:1px;height:18px;background:#334155;flex-shrink:0"></div>
+    <button onclick="startTour()" style="background:linear-gradient(135deg,#7c3aed,#1d4ed8);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0">🎬 TOUR KCN</button>
+    <button onclick="tourPort()" style="background:linear-gradient(135deg,#0e7490,#0369a1);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0">⚓ TOUR CẢNG</button>
+    <button onclick="tourCity('singapore')" style="background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0">🇸🇬 SINGAPORE</button>
+    <button onclick="tourCity('hongkong')" style="background:linear-gradient(135deg,#b45309,#92400e);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0">🇭🇰 HONG KONG</button>
+    <div style="flex:1;min-width:8px"></div>
+    <button onclick="flyToLandmark81()" style="background:#172554;color:#93c5fd;border:1px solid #2563eb;border-radius:8px;padding:8px 18px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">🏙️ HOME</button>
   </div>
-</div>
+
+</div><!-- END #app -->
+
 <script>
+
+
 const CESIUM_TOKEN='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNmUzMzBiNS1iYTIyLTQxODQtYWU2OC03ZDU0OGJiNWMzMTYiLCJpZCI6NDI3MjkyLCJzdWIiOiJLRVZJTiBUUkFOIiwiaXNzIjoiaHR0cHM6Ly9hcGkuY2VzaXVtLmNvbSIsImF1ZCI6InBybzEiLCJpYXQiOjE3ODI4NzIxODl9.OKo0xfV3eJLbE9OJyshWsaNi0IQzJsksPjEhFVNUCpQ';
 
 const PLOTS=[
@@ -781,6 +815,8 @@ function hideTourBanner(){
   document.getElementById('tour-banner').style.display = 'none';
   clearTimeout(window._bannerTimer);
 }
+
+
 
 </script>
 </body>
