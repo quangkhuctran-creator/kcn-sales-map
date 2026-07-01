@@ -121,12 +121,7 @@ input::placeholder{color:#334155}
       <div class="leg-item"><div class="leg-box" style="background:#f59e0b55;border:2px solid #f59e0b"></div><span style="color:#f59e0b">Đàm phán</span></div>
       <div class="leg-item"><div class="leg-box" style="background:#47556955;border:2px solid #64748b"></div><span style="color:#64748b">Đã thuê</span></div>
     </div>
-    <div style="position:absolute;bottom:14px;right:356px;z-index:20;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:500px">
-      <button onclick="startTour()" style="background:linear-gradient(135deg,#7c3aed,#1d4ed8);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(124,58,237,.4);white-space:nowrap">🎬 Tour KCN</button>
-      <button onclick="tourPort()" style="background:linear-gradient(135deg,#0e7490,#0369a1);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(14,116,144,.4);white-space:nowrap">⚓ Tour Cảng</button>
-      <button onclick="tourCity('singapore')" style="background:linear-gradient(135deg,#dc2626,#7c3aed);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(220,38,38,.4);white-space:nowrap">🇸🇬 Singapore</button>
-      <button onclick="tourCity('hongkong')" style="background:linear-gradient(135deg,#b45309,#dc2626);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(180,83,9,.4);white-space:nowrap">🇭🇰 Hong Kong</button>
-    </div>
+    
     <div id="info"></div>
 
     <!-- TOUR BANNER - hiện giữa màn hình -->
@@ -150,7 +145,20 @@ input::placeholder{color:#334155}
         <div id="tour-banner-sub" style="font-size:13px;color:#94a3b8;margin-top:6px"></div>
       </div>
     </div>
-    <div id="chat">
+
+  <!-- BOTTOM TOUR BAR - cố định, không bị overlap -->
+  <div style="background:#0d1117;border-top:1px solid #1e293b;padding:8px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0;z-index:30">
+    <span style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:2px;flex-shrink:0">PRO TOUR</span>
+    <div style="width:1px;height:20px;background:#1e293b;flex-shrink:0"></div>
+    <button onclick="startTour()" style="background:linear-gradient(135deg,#7c3aed,#1d4ed8);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px rgba(124,58,237,.5);white-space:nowrap;letter-spacing:.5px">🎬 TOUR KCN</button>
+    <button onclick="tourPort()" style="background:linear-gradient(135deg,#0e7490,#0369a1);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px rgba(14,116,144,.5);white-space:nowrap;letter-spacing:.5px">⚓ TOUR CẢNG</button>
+    <button onclick="tourCity('singapore')" style="background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px rgba(220,38,38,.5);white-space:nowrap;letter-spacing:.5px">🇸🇬 SINGAPORE</button>
+    <button onclick="tourCity('hongkong')" style="background:linear-gradient(135deg,#b45309,#92400e);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px rgba(180,83,9,.5);white-space:nowrap;letter-spacing:.5px">🇭🇰 HONG KONG</button>
+    <div style="flex:1"></div>
+    <button onclick="flyToLandmark81()" style="background:#172554;color:#93c5fd;border:1px solid #2563eb;border-radius:8px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🏙️ HOME</button>
+  </div>
+
+  <div id="chat">
       <div id="chat-hdr">
         <div class="avatar">🤖</div>
         <div><div style="font-size:13px;font-weight:700;color:#f1f5f9">PROtech AI</div><div style="font-size:10px;color:#22c55e">● PRO Global 3D</div></div>
@@ -328,9 +336,15 @@ window.addEventListener('load',()=>{
   loadKCNLabels();
   loadPortLabels();
 
+  // Default view: Landmark 81
   viewer.camera.flyTo({
-    destination:Cesium.Cartesian3.fromDegrees(106.952,10.976,1800),
-    orientation:{heading:0,pitch:Cesium.Math.toRadians(-55),roll:0},duration:2.5,
+    destination:Cesium.Cartesian3.fromDegrees(LANDMARK81.lon, LANDMARK81.lat, LANDMARK81.h),
+    orientation:{
+      heading:Cesium.Math.toRadians(LANDMARK81.heading),
+      pitch:Cesium.Math.toRadians(LANDMARK81.pitch),
+      roll:0
+    },
+    duration:2.5,
   });
 
   addChat('assistant','🌍 PRO Global 3D sẵn sàng!\n\nClick vào lô màu xanh/vàng/xám trên bản đồ, hoặc hỏi tôi về giá thuê, hạ tầng, FDI.');
