@@ -206,10 +206,10 @@ html,body{height:100vh;overflow:hidden}
   <div id="tour-bar">
     <span style="font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:2px;flex-shrink:0;font-weight:700">PRO TOUR</span>
     <div style="width:1px;height:18px;background:#334155;flex-shrink:0"></div>
-    <button onclick="startTour()" style="background:linear-gradient(135deg,#7c3aed,#1d4ed8);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;position:relative;z-index:10000">🎬 TOUR KCN</button>
-    <button onclick="tourPort()" style="background:linear-gradient(135deg,#0e7490,#0369a1);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;position:relative;z-index:10000">⚓ TOUR CẢNG</button>
-    <button onclick="tourCity('singapore')" style="background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;position:relative;z-index:10000">🇸🇬 SINGAPORE</button>
-    <button onclick="tourCity('hongkong')" style="background:linear-gradient(135deg,#b45309,#92400e);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;position:relative;z-index:10000">🇭🇰 HONG KONG</button>
+    <button id="btn-tour-kcn" onclick="startTour()" disabled style="background:#334155;color:#64748b;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:not-allowed;white-space:nowrap;flex-shrink:0;position:relative;z-index:10000;transition:all .3s">⏳ TOUR KCN</button>
+    <button id="btn-tour-port" onclick="tourPort()" disabled style="background:#334155;color:#64748b;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:not-allowed;white-space:nowrap;flex-shrink:0;position:relative;z-index:10000;transition:all .3s">⏳ TOUR CẢNG</button>
+    <button id="btn-tour-sg" onclick="tourCity('singapore')" disabled style="background:#334155;color:#64748b;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:not-allowed;white-space:nowrap;flex-shrink:0;position:relative;z-index:10000;transition:all .3s">⏳ SINGAPORE</button>
+    <button id="btn-tour-hk" onclick="tourCity('hongkong')" disabled style="background:#334155;color:#64748b;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:not-allowed;white-space:nowrap;flex-shrink:0;position:relative;z-index:10000;transition:all .3s">⏳ HONG KONG</button>
     <button onclick="flyToLandmark81()" style="background:#172554;color:#93c5fd;border:1px solid #2563eb;border-radius:8px;padding:8px 16px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;position:relative;z-index:10000;margin-left:4px">🏙️ HOME</button>
   </div>
 
@@ -374,6 +374,36 @@ window.addEventListener('load',()=>{
   // Load KCN & Port labels
   loadKCNLabels();
   loadPortLabels();
+
+  // Enable tour buttons after Cesium ready
+  function enableTourButtons() {
+    const configs = [
+      {id:'btn-tour-kcn', label:'🎬 TOUR KCN', bg:'linear-gradient(135deg,#7c3aed,#1d4ed8)'},
+      {id:'btn-tour-port', label:'⚓ TOUR CẢNG', bg:'linear-gradient(135deg,#0e7490,#0369a1)'},
+      {id:'btn-tour-sg', label:'🇸🇬 SINGAPORE', bg:'linear-gradient(135deg,#dc2626,#b91c1c)'},
+      {id:'btn-tour-hk', label:'🇭🇰 HONG KONG', bg:'linear-gradient(135deg,#b45309,#92400e)'},
+    ];
+    configs.forEach(c => {
+      const btn = document.getElementById(c.id);
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = c.label;
+        btn.style.background = c.bg;
+        btn.style.color = '#fff';
+        btn.style.cursor = 'pointer';
+      }
+    });
+  }
+
+  // Enable when globe is ready
+  viewer.scene.globe.tileLoadProgressEvent.addEventListener(function(remaining) {
+    if (remaining === 0) {
+      enableTourButtons();
+      viewer.scene.globe.tileLoadProgressEvent.removeEventListener(arguments.callee);
+    }
+  });
+  // Fallback: enable after 5s regardless
+  setTimeout(enableTourButtons, 5000);
 
   // Default view: Landmark 81
   viewer.camera.flyTo({
