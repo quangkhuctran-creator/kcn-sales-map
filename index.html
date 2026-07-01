@@ -58,7 +58,7 @@ html,body{height:100vh;overflow:hidden;background:#060b14;color:#e2e8f0;font-fam
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes bounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-4px);opacity:1}}
 .cesium-widget-credits,.cesium-credit-logoContainer{display:none!important}
-#cesiumContainer canvas{display:block}
+#cesiumContainer canvas{display:block;pointer-events:auto}
 #cesiumContainer .cesium-widget{overflow:hidden}
 
 input::placeholder{color:#334155}
@@ -76,13 +76,13 @@ input::placeholder{color:#334155}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100vh;overflow:hidden}
 #app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
-#main{flex:1;display:flex;min-height:0;overflow:hidden;position:relative;isolation:isolate}
+#main{flex:1;display:flex;min-height:0;overflow:hidden;position:relative;isolation:isolate;contain:strict}
 #cesiumContainer{flex:1;min-width:0;min-height:0}
 #chat{width:340px;background:#0a0f1a;border-left:1px solid #1e293b;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;min-height:0}
-#tour-bar{background:#0d1117;border-top:1px solid #1e293b;padding:7px 14px;display:flex;align-items:center;gap:7px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;z-index:9999;position:relative}
+#tour-bar{background:#0d1117;border-top:2px solid #1e3a5f;padding:8px 14px;display:flex;align-items:center;gap:7px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;z-index:9999;position:relative;pointer-events:all;min-height:52px}
 #tour-bar::-webkit-scrollbar{display:none}
 .cesium-widget-credits,.cesium-credit-logoContainer{display:none!important}
-#cesiumContainer canvas{display:block}
+#cesiumContainer canvas{display:block;pointer-events:auto}
 #cesiumContainer .cesium-widget{overflow:hidden}
 
 </style>
@@ -206,10 +206,10 @@ html,body{height:100vh;overflow:hidden}
   <div id="tour-bar">
     <span style="font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:2px;flex-shrink:0;font-weight:700">PRO TOUR</span>
     <div style="width:1px;height:18px;background:#334155;flex-shrink:0"></div>
-    <button onclick="startTour()" style="background:linear-gradient(135deg,#7c3aed,#1d4ed8);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0">🎬 TOUR KCN</button>
-    <button onclick="tourPort()" style="background:linear-gradient(135deg,#0e7490,#0369a1);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0">⚓ TOUR CẢNG</button>
-    <button onclick="tourCity('singapore')" style="background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0">🇸🇬 SINGAPORE</button>
-    <button onclick="tourCity('hongkong')" style="background:linear-gradient(135deg,#b45309,#92400e);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0">🇭🇰 HONG KONG</button>
+    <button onclick="startTour()" style="background:linear-gradient(135deg,#7c3aed,#1d4ed8);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0;pointer-events:all;position:relative;z-index:10000">🎬 TOUR KCN</button>
+    <button onclick="tourPort()" style="background:linear-gradient(135deg,#0e7490,#0369a1);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0;pointer-events:all;position:relative;z-index:10000">⚓ TOUR CẢNG</button>
+    <button onclick="tourCity('singapore')" style="background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0;pointer-events:all;position:relative;z-index:10000">🇸🇬 SINGAPORE</button>
+    <button onclick="tourCity('hongkong')" style="background:linear-gradient(135deg,#b45309,#92400e);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.5px;flex-shrink:0;pointer-events:all;position:relative;z-index:10000">🇭🇰 HONG KONG</button>
     <div style="flex:1;min-width:8px"></div>
     <button onclick="flyToLandmark81()" style="background:#172554;color:#93c5fd;border:1px solid #2563eb;border-radius:8px;padding:8px 18px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">🏙️ HOME</button>
   </div>
