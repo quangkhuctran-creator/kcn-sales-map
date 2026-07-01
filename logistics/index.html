@@ -4,8 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
 <title>KCN Long Thành – Sales Map 3D | PROtech · PROBIM</title>
-<script src="https://cesium.com/downloads/cesiumjs/releases/1.107/Build/Cesium/Cesium.js"></script>
-<link href="https://cesium.com/downloads/cesiumjs/releases/1.107/Build/Cesium/Widgets/widgets.css" rel="stylesheet"/>
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.142/Build/Cesium/Cesium.js"></script>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.142/Build/Cesium/Widgets/widgets.css" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100vh;overflow:hidden;background:#060b14;color:#e2e8f0;font-family:-apple-system,'Segoe UI',sans-serif}
@@ -211,7 +211,7 @@ function plotCenter(coords){
 window.addEventListener('load',()=>{
   Cesium.Ion.defaultAccessToken=CESIUM_TOKEN;
   viewer=new Cesium.Viewer('cesiumContainer',{
-    terrainProvider: Cesium.createWorldTerrain(),
+    terrain: Cesium.Terrain.fromWorldTerrain(),
     baseLayerPicker:false,navigationHelpButton:false,sceneModePicker:false,
     geocoder:false,homeButton:false,fullscreenButton:false,
     animation:false,timeline:false,infoBox:false,selectionIndicator:false,
